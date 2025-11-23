@@ -63,7 +63,7 @@ php artisan db:seed
 ## サンプルユーザーアカウント（動作確認用）
 UsersTableSeederで登録されるメール認証済みのテストユーザーです。<br />
 
-###サンプルユーザー（一般）
+### サンプルユーザー（一般）
 ・ログインURL：http://localhost/login
 
 ・鈴木　一郎<br />
@@ -82,7 +82,7 @@ Password: testtest<br />
 Email: user5@test.com<br />
 Password: testtest<br />
 
-###サンプルユーザー（管理者）
+### サンプルユーザー（管理者）
 ・管理者ログインURL：http://localhost/admin/login
 
 ・管理者<br />
