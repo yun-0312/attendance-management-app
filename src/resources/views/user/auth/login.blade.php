@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/login.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/user/auth/login.css') }}" />
 @endsection
 
 @section('header')
-@include('layouts.header')
+@include('layouts.user_header')
 @endsection
 
 @section('content')

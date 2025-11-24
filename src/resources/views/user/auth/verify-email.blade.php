@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/auth/verify-email.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/user/auth/verify-email.css') }}" />
 @endsection
 
 @section('header')
