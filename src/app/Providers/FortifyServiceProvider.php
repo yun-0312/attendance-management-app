@@ -56,7 +56,7 @@ class FortifyServiceProvider extends ServiceProvider
             if (!$user->hasVerifiedEmail()) {
                 return route('verification.notice');
             }
-            return route('/');
+            return '/';
         });
         Fortify::redirects('register', function () {
             return route('verification.notice');
