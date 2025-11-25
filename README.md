@@ -10,7 +10,7 @@ Dockerを利用した環境構築が可能で、ユーザー登録、出退勤�
 ### Dockerビルド
   1. リポジトリをクローン
 ``` bash
-git clone git@github.com:yun-0312/flea-market.git
+git clone git@github.com:yun-0312/attendance-management-app.git
 ```
  2. Dockerコンテナをビルドして起動
 ``` bash
