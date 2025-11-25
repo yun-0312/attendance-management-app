@@ -9,18 +9,14 @@
 @endsection
 
 @section('content')
-@if (session('succsess'))
+@if (session('success'))
 <p class="success-message">
     {{ session('success') }}
 </p>
 @endif
 <div class="attendance-container">
     <div class="attendance-status">
-    @if (!$attendance)
-        <span class="attendance-status__label">勤務外</span>
-    @else
-        <span class="attendance-status__label">{{ $attendance->current_status }}</span>
-    @endif
+        <span class="attendance-status__label">{{ $current_status }}</span>
     </div>
 
     <div class="attendance-date">
@@ -32,36 +28,35 @@
     </div>
 
     <div class="attendance-actions">
-
         {{-- 勤務外 --}}
-        @if (!$attendance || $attendance->current_status === '勤務外')
-            <form action="{{ route('attendance.start') }}" method="post">
-                @csrf
-                <button class="attendance-btn">出勤</button>
-            </form>
+        @if (!$attendance || $current_status === '勤務外')
+        <form action="{{ route('attendance.start') }}" method="post" class="attendance-action__form">
+            @csrf
+            <button class="attendance-btn">出勤</button>
+        </form>
 
         {{-- 勤務中 --}}
         @elseif ($attendance->current_status === '勤務中')
-            <form action="{{ route('attendance.end') }}" method="post" style="display:inline-block;">
-                @csrf
-                <button class="attendance-btn">退勤</button>
-            </form>
+        <form action="{{ route('attendance.end') }}" method="post" class="attendance-action__form">
+            @csrf
+            <button class="attendance-btn">退勤</button>
+        </form>
 
-            <form action="{{ route('attendance.break.start') }}" method="post" style="display:inline-block;">
-                @csrf
-                <button class="attendance-btn">休憩入</button>
-            </form>
+        <form action="{{ route('attendance.break.start') }}" method="post" class="attendance-action__form">
+            @csrf
+            <button class="attendance-btn__break">休憩入</button>
+        </form>
 
         {{-- 休憩中 --}}
         @elseif ($attendance->current_status === '休憩中')
-            <form action="{{ route('attendance.break.end') }}" method="post">
-                @csrf
-                <button class="attendance-btn">休憩戻る</button>
-            </form>
+        <form action="{{ route('attendance.break.end') }}" method="post" class="attendance-action__form">
+            @csrf
+            <button class="attendance-btn__break">休憩戻</button>
+        </form>
 
         {{-- 退勤済 --}}
         @elseif ($attendance->current_status === '退勤済')
-            <p class="attendance-status-message">お疲れさまでした。</p>
+        <p class="attendance-status__message">お疲れさまでした。</p>
         @endif
     </div>
 </div>

@@ -54,7 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 退勤
     Route::post('/attendance/end', [AttendanceController::class, 'end'])
         ->name('attendance.end');
-    
+
     // 休憩入り
     Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])
         ->name('attendance.break.start');
@@ -63,5 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])
         ->name('attendance.break.end');
 
+    Route::get('/attendance/list', [AttendanceController::class, 'list'])
+        ->name('attendance.list');
 });
 

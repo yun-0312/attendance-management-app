@@ -48,4 +48,11 @@ class Attendance extends Model
         }
         return '勤務外';
     }
+
+    public static function todayForUser($userId)
+    {
+        return static::where('user_id', $userId)
+            ->whereDate('clock_in', today())
+            ->first();
+    }
 }

@@ -7,11 +7,18 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index () {   
+    public function index()
+    {
         $attendance = Attendance::where('user_id', auth()->id())
-            ->where('work_date', today()->toDateString())
+            ->whereDate('work_date', today())
+            ->with('breakTimes')
+            ->latest()
             ->first();
-        return view('user.attendance.index', compact('attendance'));
+
+        // ステータスをまとめて生成
+        $current_status = $attendance->current_status ?? '勤務外';
+
+        return view('user.attendance.index', compact('attendance', 'current_status'));
     }
 
     public function start () {
@@ -59,5 +66,14 @@ class AttendanceController extends Controller
         ]);
 
         return back()->with('success', '休憩終了しました');
+    }
+
+    public function list () {
+        $attendances = Attendance::where('user_id', auth()->id())
+            ->with('breakTimes')
+            ->orderBy('work_date', 'desc')
+            ->paginate(10);
+
+        return view('user.attendance.list', compact('attendances'));
     }
 }

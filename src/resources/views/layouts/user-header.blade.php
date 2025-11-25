@@ -10,7 +10,7 @@
                 <a href="{{ route('attendance.index') }}" class="header-nav__link">勤怠</a>
             </li>
             <li class="header-nav__item">
-                <a href="{{ route('attendance.index') }}" class="header-nav__link">勤怠一覧</a>
+                <a href="{{ route('attendance.list') }}" class="header-nav__link">勤怠一覧</a>
             </li>
             <li class="header-nav__item">
                 <a href="{{ route('attendance.index') }}" class="header-nav__link">申請</a>
