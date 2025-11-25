@@ -7,79 +7,57 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    public function index () {   
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->where('work_date', today()->toDateString())
+            ->first();
+        return view('user.attendance.index', compact('attendance'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function start () {
+        Attendance::create([
+            'user_id' => auth()->id(),
+            'work_date' => now()->toDateString(),
+            'clock_in' => now(),
+        ]);
+        return redirect()->route('attendance.index')->with('success', '出勤しました');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function end () {
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->whereDate('work_date', today())
+            ->first();
+
+        $attendance->update([
+            'clock_out' => now(),
+        ]);
+
+        return back()->with('success', '退勤しました');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Attendance  $attendance
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Attendance $attendance)
-    {
-        //
+    public function breakStart () {
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->whereDate('work_date', today())
+            ->first();
+
+        $attendance->breakTimes()->create([
+            'break_start' => now(),
+        ]);
+
+        return back()->with('success', '休憩開始しました');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Attendance  $attendance
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Attendance $attendance)
-    {
-        //
-    }
+    public function breakEnd () {
+        $attendance = Attendance::where('user_id', auth()->id())
+            ->whereDate('work_date', today())
+            ->first();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Attendance  $attendance
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Attendance $attendance)
-    {
-        //
-    }
+        $break = $attendance->breakTimes()->whereNull('break_end')->first();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Attendance  $attendance
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Attendance $attendance)
-    {
-        //
+        $break->update([
+            'break_end' => now(),
+        ]);
+
+        return back()->with('success', '休憩終了しました');
     }
 }

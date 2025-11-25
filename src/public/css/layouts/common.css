@@ -18,3 +18,46 @@
 .header-logo__image {
     width: 100%;
 }
+
+.header-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    width: 463px;
+}
+
+.header-nav__item {
+    width: 100%;
+    font-size: 24px;
+    font-weight: 400;
+    white-space: nowrap;
+    flex: auto;
+    margin-right: 10px;
+}
+
+.header-nav__link {
+    font-size: 24px;
+    font-weight: 400;
+    color: #FFFFFF;
+    background-color: #000000;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* スマホ対応 */
+@media screen and (max-width: 768px) {
+    .header {
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px 20px;
+        height: auto;
+    }
+
+    .header-nav {
+        order: 2;
+        gap: 10px;
+    }
+}

@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use App\Http\Requests\RegisterRequest;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -21,10 +22,12 @@ class CreateNewUser implements CreatesNewUsers
         $request = app(RegisterRequest::class);
         $validated = $request->validateResolvedWithData($input);
 
-        return User::create([
+        $user =  User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+        event(new Registered($user));
+        return $user;
     }
 }

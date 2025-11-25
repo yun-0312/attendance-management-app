@@ -24,6 +24,6 @@ class LoginController extends Controller
             return redirect()->route('verification.notice')
                 ->with('message', 'メールアドレスの確認が必要です。登録時に送信されたメールを確認してください。');
         }
-        return redirect()->intended(route('items.index'));
+        return redirect()->intended(route('attendance.index'));
     }
 }

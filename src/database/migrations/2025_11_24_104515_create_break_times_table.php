@@ -17,7 +17,7 @@ class CreateBreakTimesTable extends Migration
             $table->id();
             $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
             $table->dateTime('break_start');
-            $table->dateTime('break_end')->nullable;
+            $table->dateTime('break_end')->nullable();
             $table->timestamps();
         });
     }
