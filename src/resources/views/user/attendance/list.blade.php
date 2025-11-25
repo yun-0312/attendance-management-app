@@ -28,7 +28,12 @@
         <tr>
             <td>{{ $attendance->work_date->locale('ja')->isoFormat('M/D(ddd)') }}</td>
             <td>{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '-' }}</td>
-            <td>{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '-' }}</td>
+            <td>@if ($attendance->clock_in && $attendance->clock_out)
+                {{ $attendance->clock_out->diffInMinutes($attendance->clock_in) }} 分
+                @else
+                -
+                @endif
+            </td>
 
             {{-- 休憩時間合計 --}}
             <td>

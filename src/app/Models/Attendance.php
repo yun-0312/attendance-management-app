@@ -17,7 +17,11 @@ class Attendance extends Model
         'status',
     ];
 
-    protected $dates = ['date'];
+    protected $casts = [
+        'work_date' => 'date', 
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+    ];
 
     public function user()
     {
