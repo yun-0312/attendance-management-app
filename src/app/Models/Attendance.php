@@ -17,6 +17,8 @@ class Attendance extends Model
         'status',
     ];
 
+    protected $dates = ['date'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
