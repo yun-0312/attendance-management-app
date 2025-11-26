@@ -77,4 +77,12 @@ class AttendanceController extends Controller
             'attendances','period','year','month','prevMonth','nextMonth'
         ));
     }
+
+    public function detail (Attendance $attendance) {
+        if ($attendance->user_id !== auth()->id()) {
+            abort(403);
+        }
+        $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
+        return view('user.attendance.detail', compact('attendance', 'breaks'));
+    }
 }

@@ -66,5 +66,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 勤怠一覧画面（一般ユーザー）
     Route::get('/attendance/list', [AttendanceController::class, 'list'])
         ->name('attendance.list');
+
+    // 勤怠詳細画面（一般ユーザー）
+    Route::get('/attendance/detail/{attendance}', [AttendanceController::class, 'detail'])
+        ->name('attendance.detail')
+        ->middleware('auth');
 });
 
