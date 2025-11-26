@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Attendance extends Model
 {
@@ -60,5 +61,69 @@ class Attendance extends Model
         return static::where('user_id', $userId)
             ->whereDate('clock_in', today())
             ->first();
+    }
+
+    // 勤務時間合計計算
+    public function getTotalWorkTimeAttribute()
+    {
+        if (!$this->clock_in || !$this->clock_out) {
+            return null;
+        }
+        $totalMinutes = $this->clock_out->diffInMinutes($this->clock_in)
+            - $this->breakTimes->sum(function($b){
+                return $b->break_end
+                    ? $b->break_end->diffInMinutes($b->break_start)
+                    : 0;
+            });
+        $hours = floor($totalMinutes / 60);
+        $minutes = $totalMinutes % 60;
+        return sprintf('%d:%02d', $hours, $minutes);
+    }
+
+    //月ごとの勤怠取得
+    public static function forMonth($userId, $year, $month)
+    {
+        $start = \Carbon\Carbon::create($year, $month, 1);
+        $end   = $start->copy()->endOfMonth();
+
+        return static::where('user_id', $userId)
+            ->with('breakTimes')
+            ->whereBetween('work_date', [$start, $end])
+            ->get()
+            ->keyBy('work_date');
+    }
+
+    //休憩時間取得
+    public function getTotalBreakTimeAttribute()
+    {
+        return $this->breakTimes->sum(function($b){
+            return $b->break_end
+                ? $b->break_end->diffInMinutes($b->break_start)
+                : 0;
+        });
+    }
+
+    /**
+     * 指定年月の Carbon インスタンスを返す
+     */
+    public static function monthDate($year, $month)
+    {
+        return Carbon::create($year, $month, 1);
+    }
+
+    /**
+     * 前月を返す
+     */
+    public static function prevMonth($year, $month)
+    {
+        return self::monthDate($year, $month)->subMonth();
+    }
+
+    /**
+     * 次月を返す
+     */
+    public static function nextMonth($year, $month)
+    {
+        return self::monthDate($year, $month)->addMonth();
     }
 }

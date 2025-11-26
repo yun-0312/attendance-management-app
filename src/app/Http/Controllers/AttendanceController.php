@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AttendanceController extends Controller
 {
@@ -68,12 +70,21 @@ class AttendanceController extends Controller
         return back()->with('success', '休憩終了しました');
     }
 
-    public function list () {
-        $attendances = Attendance::where('user_id', auth()->id())
-            ->with('breakTimes')
-            ->orderBy('work_date', 'desc')
-            ->paginate(10);
+    public function list (Request $request) {
+        $year = $request->input('year', now()->year);
+        $month = $request->input('month', now()->month);
 
-        return view('user.attendance.list', compact('attendances'));
+        $attendances = Attendance::forMonth(auth()->id(), $year, $month);
+
+        $start = Attendance::monthDate($year, $month);
+        $end   = $start->copy()->endOfMonth();
+        $period = CarbonPeriod::create($start, $end);
+
+        $prevMonth = Attendance::prevMonth($year, $month);
+        $nextMonth = Attendance::nextMonth($year, $month);
+
+        return view('user.attendance.list', compact(
+            'attendances','period','year','month','prevMonth','nextMonth'
+        ));
     }
 }

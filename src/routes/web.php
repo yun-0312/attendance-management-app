@@ -63,6 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])
         ->name('attendance.break.end');
 
+    // 勤怠一覧画面（一般ユーザー）    
     Route::get('/attendance/list', [AttendanceController::class, 'list'])
         ->name('attendance.list');
 });
