@@ -4,22 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
 class AttendanceController extends Controller
 {
-    public function index()
-    {
+    public function index () {
         $attendance = Attendance::where('user_id', auth()->id())
             ->whereDate('work_date', today())
             ->with('breakTimes')
             ->latest()
             ->first();
-
-        // ステータスをまとめて生成
         $current_status = $attendance->current_status ?? '勤務外';
-
         return view('user.attendance.index', compact('attendance', 'current_status'));
     }
 
@@ -40,7 +35,6 @@ class AttendanceController extends Controller
         $attendance->update([
             'clock_out' => now(),
         ]);
-
         return back()->with('success', '退勤しました');
     }
 
@@ -52,7 +46,6 @@ class AttendanceController extends Controller
         $attendance->breakTimes()->create([
             'break_start' => now(),
         ]);
-
         return back()->with('success', '休憩開始しました');
     }
 
@@ -60,13 +53,10 @@ class AttendanceController extends Controller
         $attendance = Attendance::where('user_id', auth()->id())
             ->whereDate('work_date', today())
             ->first();
-
         $break = $attendance->breakTimes()->whereNull('break_end')->first();
-
         $break->update([
             'break_end' => now(),
         ]);
-
         return back()->with('success', '休憩終了しました');
     }
 

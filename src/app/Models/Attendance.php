@@ -90,17 +90,22 @@ class Attendance extends Model
             ->with('breakTimes')
             ->whereBetween('work_date', [$start, $end])
             ->get()
-            ->keyBy('work_date');
+            ->keyBy(function ($attendance) {
+                return $attendance->work_date->format('Y-m-d');
+            });
     }
 
     //休憩時間取得
     public function getTotalBreakTimeAttribute()
     {
-        return $this->breakTimes->sum(function($b){
+        $totalMinutes = $this->breakTimes->sum(function($b){
             return $b->break_end
                 ? $b->break_end->diffInMinutes($b->break_start)
                 : 0;
         });
+        $hours = floor($totalMinutes / 60);
+        $minutes = $totalMinutes % 60;
+        return sprintf('%d:%02d', $hours, $minutes);
     }
 
     //指定年月の Carbon インスタンスを返す
