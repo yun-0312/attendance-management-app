@@ -12,13 +12,14 @@
 
 <h2 class="attendance-list__title">勤怠一覧</h2>
 
-<div class="month-pagination">
-    @foreach($months as $index => $m)
-        <a href="{{ route('attendance.list', ['page' => $index+1]) }}"
-            class="{{ $currentMonth->year == $m->year && $currentMonth->month == $m->month ? 'active' : '' }}">
-            {{ $m->year }}年{{ $m->month }}月
-        </a>
-    @endforeach
+<div class="month-nav">
+    <a href="{{ route('attendance.list', ['year' => $prevMonth->year, 'month' => $prevMonth->month]) }}"
+        class="month-nav__link">＜ 前月</a>
+
+    <span class="month-nav__current">{{ $year }}年{{ $month }}月</span>
+
+    <a href="{{ route('attendance.list', ['year' => $nextMonth->year, 'month' => $nextMonth->month]) }}"
+        class="month-nav__link">次月 ＞</a>
 </div>
 
 
