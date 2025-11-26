@@ -83,7 +83,7 @@ class Attendance extends Model
     //月ごとの勤怠取得
     public static function forMonth($userId, $year, $month)
     {
-        $start = \Carbon\Carbon::create($year, $month, 1);
+        $start = Carbon::create($year, $month, 1);
         $end   = $start->copy()->endOfMonth();
 
         return static::where('user_id', $userId)
@@ -103,25 +103,19 @@ class Attendance extends Model
         });
     }
 
-    /**
-     * 指定年月の Carbon インスタンスを返す
-     */
+    //指定年月の Carbon インスタンスを返す
     public static function monthDate($year, $month)
     {
         return Carbon::create($year, $month, 1);
     }
 
-    /**
-     * 前月を返す
-     */
+    // 前月を返す
     public static function prevMonth($year, $month)
     {
         return self::monthDate($year, $month)->subMonth();
     }
 
-    /**
-     * 次月を返す
-     */
+    //次月を返す
     public static function nextMonth($year, $month)
     {
         return self::monthDate($year, $month)->addMonth();
