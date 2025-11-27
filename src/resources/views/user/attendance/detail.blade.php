@@ -38,25 +38,28 @@
             <tr>
                 <th>休憩</th>
                 <td>
-                    @if(isset($breaks[0]))
-                    <input type="time" name="breaks[0][start]" value="{{ isset($breaks[0]) ? $breaks[0]->break_start->format('H:i') : '' }}"> ～
-                    <input type="time" name="breaks[0][end]" value="{{ isset($breaks[0]) && $breaks[0]->break_end ? $breaks[0]->break_end->format('H:i') : '' }}">
-                    @endif
+                    @foreach($breaks as $i => $break)
+                        <input type="time" name="breaks[{{ $i }}][start]" 
+                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}">
+                            ～
+                        <input type="time" name="breaks[{{ $i }}][end]"
+                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}">
+                    @endforeach
                 </td>
             </tr>
             <tr>
                 <th>休憩2</th>
                 <td>
-                    @if(isset($breaks[1]))
-                    {{ $breaks[1]->break_start->format('H:i') }} ～
-                    {{ $breaks[1]->break_end ? $breaks[1]->break_end->format('H:i') : '-' }}
-                    @endif
+                    <input type="time" name="breaks[{{ count($breaks) }}][start]">
+                        ～
+                    <input type="time" name="breaks[{{ count($breaks) }}][end]">
                 </td>
             </tr>
             <tr>
                 <th>備考</th>
-                <td><textarea name="reason" rows="4" class="detail-textarea"
-                        placeholder="例：打刻漏れのため">{{ old('reason') }}</textarea></td>
+                <td>
+                    <textarea name="reason" rows="4" class="detail-textarea">{{ old('reason') }}</textarea>
+                </td>
             </tr>
         </table>
         <div class="detail-footer">
