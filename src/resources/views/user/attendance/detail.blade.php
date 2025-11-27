@@ -31,10 +31,10 @@
                 <td class="detail-table__data">
                     <div class="time-row">
                         <input type="time" name="clock_in" class="time__input"
-                            value="{{ $attendance->clock_in->format('H:i') }}">
+                            value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
                         <span class="time-separator">～</span>
                         <input type="time" name="clock_out" class="time__input"
-                            value="{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}">
+                            value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}">
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
@@ -50,7 +50,7 @@
             </tr>
             @foreach($breaks as $i => $break)
             <tr class="detail-table__column">
-                <th class="detail-table__header">休憩{{ ++$i }}</th>
+                <th class="detail-table__header">休憩{{ $loop->iteration }}}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
                         <input type="time" name="breaks[{{ $i }}][start]"
@@ -78,9 +78,9 @@
                 <th class="detail-table__header">休憩{{ count($breaks) + 1 }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="time" name="breaks[{{ count($breaks) }}][start]" class="time__input">
+                        <input type="time" name="breaks[{{ count($breaks) }}][start]" class="time__input" value="{{ old("breaks.$newIndex.start") }}">
                         <span class="time-separator">～</span>
-                        <input type="time" name="breaks[{{ count($breaks) }}][end]" class="time__input">
+                        <input type="time" name="breaks[{{ count($breaks) }}][end]" class="time__input" value="{{ old("breaks.$newIndex.start") }}">
                     </div>
                     @error('breaks.*.start')
                     <p class="detail-form__error-message">
