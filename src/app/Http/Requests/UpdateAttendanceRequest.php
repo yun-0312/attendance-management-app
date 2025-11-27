@@ -27,25 +27,27 @@ class UpdateAttendanceRequest extends FormRequest
             'clock_in' => 'required|date_format:H:i',
             'clock_out' => 'required|date_format:H:i|after:clock_in',
             'breaks.*.start' => 'nullable|date_format:H:i|after:clock_in',
-            'breaks.*.end' => 'nullable|date_format:H:i|after:breaks.*.start',        
+            'breaks.*.end' => 'nullable|date_format:H:i|after:breaks.*.start',
             'reason' => 'required|string|max:255',
         ];
     }
 
     public function messages()
     {
-        'clock_in.required' => '出勤時間を入力してください',
-        'clock_in.date_format' => '出勤時間を0:00の形式で入力してください',
-        'clock_out.required' => '退勤時間を入力してください',
-        'clock_out.date_format' => '退勤時間を0:00の形式で入力してください',
-        'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
-        'breaks.*.start.date_format' => '休憩時間を0:00の形式で入力してください',
-        'breaks.*.start.after' => '休憩時間が不適切な値です',
-        'breaks.*.end.date_format' => '休憩時間を0:00の形式で入力してください',
-        'breaks.*.end.after' => '休憩時間が不適切な値です',
-        'reason.required' => '備考を記入してください',
-        'reason.string' => '備考を文字列で入力してください',
-        'reason.max' => '備考を255文字以内で入力してください',
+        return [
+            'clock_in.required' => '出勤時間を入力してください',
+            'clock_in.date_format' => '出勤時間を0:00の形式で入力してください',
+            'clock_out.required' => '退勤時間を入力してください',
+            'clock_out.date_format' => '退勤時間を0:00の形式で入力してください',
+            'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
+            'breaks.*.start.date_format' => '休憩時間を0:00の形式で入力してください',
+            'breaks.*.start.after' => '休憩時間が不適切な値です',
+            'breaks.*.end.date_format' => '休憩時間を0:00の形式で入力してください',
+            'breaks.*.end.after' => '休憩時間が不適切な値です',
+            'reason.required' => '備考を記入してください',
+            'reason.string' => '備考を文字列で入力してください',
+            'reason.max' => '備考を255文字以内で入力してください',
+        ];
     }
 
     public function withValidator ($validator) {
