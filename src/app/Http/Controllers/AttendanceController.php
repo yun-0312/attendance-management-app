@@ -85,4 +85,23 @@ class AttendanceController extends Controller
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
         return view('user.attendance.detail', compact('attendance', 'breaks'));
     }
+
+    public function update (Request $request, Attendance $attendance) {
+        if ($attendance->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // 修正申請の保存
+        $attendance->attendanceRequests()->create([
+            'user_id' => auth()->id(),
+            'requested_clock_in' => $validated['clock_in'],
+            'requested_clock_out' => $validated['clock_out'] ?? null,
+            'reason' => $validated['reason'],
+            'status' => 'pending',
+        ]);
+
+        return redirect()
+            ->route('attendance.detail', $attendance->id)
+            ->with('success', '修正申請を送信しました');
+    }
 }

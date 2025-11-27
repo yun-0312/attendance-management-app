@@ -71,5 +71,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/detail/{attendance}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail')
         ->middleware('auth');
+
+    // 勤怠修正（一般ユーザー）
+    Route::patch('/attendance/detail/{attendance}', [AttendanceController::class, 'update'])
+        ->name('attendance.update')
+        ->middleware('auth');
 });
 
