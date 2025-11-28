@@ -16,6 +16,7 @@ class CreateAttendanceRequestsTable extends Migration
         Schema::create('attendance_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('requested_clock_in');
             $table->dateTime('requested_clock_out');
             $table->text('reason');

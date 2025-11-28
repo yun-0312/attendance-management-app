@@ -9,6 +9,11 @@
 @endsection
 
 @section('content')
+@if (session('success'))
+<p class="success-message">
+    {{ session('success') }}
+</p>
+@endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
     <form class="detail__form" action="{{ route('attendance.update', ['attendance' => $attendance->id])}}" method="post">
@@ -30,11 +35,9 @@
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="time" name="clock_in" class="time__input"
-                            value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
+                        <input type="text" name="clock_in" class="time__input" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
                         <span class="time-separator">～</span>
-                        <input type="time" name="clock_out" class="time__input"
-                            value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}">
+                        <input type="text"  name="clock_out" class="time__input" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}">
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
@@ -50,23 +53,22 @@
             </tr>
             @foreach($breaks as $i => $break)
             <tr class="detail-table__column">
-                <th class="detail-table__header">休憩{{ $loop->iteration }}}</th>
+                <th class="detail-table__header">休憩{{ ++$i }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="time" name="breaks[{{ $i }}][start]"
-                            class="time__input"
+                        <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
+                        <input type="test" name="breaks[{{ $i }}][start]" class="time__input"
                             value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}">
                         <span class="time-separator">～</span>
-                        <input type="time" name="breaks[{{ $i }}][end]"
-                            class="time__input"
+                        <input type="text" name="breaks[{{ $i }}][end]" class="time__input"
                             value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}">
                     </div>
-                    @error('breaks.*.start')
+                    @error('breaks.$i.start')
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
                     @enderror
-                    @error('breaks.*.end')
+                    @error('breaks.$i.end')
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
@@ -78,9 +80,9 @@
                 <th class="detail-table__header">休憩{{ count($breaks) + 1 }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="time" name="breaks[{{ count($breaks) }}][start]" class="time__input" value="{{ old("breaks.$newIndex.start") }}">
+                        <input type="text" name="breaks[{{ count($breaks) }}][start]" class="time__input" value="{{ old("breaks.$i.start") }}">
                         <span class="time-separator">～</span>
-                        <input type="time" name="breaks[{{ count($breaks) }}][end]" class="time__input" value="{{ old("breaks.$newIndex.start") }}">
+                        <input type="text" name="breaks[{{ count($breaks) }}][end]" class="time__input" value="{{ old("breaks.$i.start") }}">
                     </div>
                     @error('breaks.*.start')
                     <p class="detail-form__error-message">

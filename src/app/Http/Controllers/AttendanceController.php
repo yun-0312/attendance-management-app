@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateAttendanceRequest;
 use App\Models\AttendanceRequest;
 use App\Models\BreakTimeRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -94,36 +95,31 @@ class AttendanceController extends Controller
         if ($attendance->user_id !== auth()->id()) {
             abort(403);
         }
-
         $date = $attendance->work_date->toDateString();
+        DB::transaction(function () use ($request, $attendance, $date) {
+            $attendanceRequest = AttendanceRequest::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => auth()->id(),
+                'requested_clock_in' => Carbon::parse("$date {$request->clock_in}"),
+                'requested_clock_out' => Carbon::parse("$date {$request->clock_out}"),
+                'reason' => $request->reason,
+                'status' => 'pending',
+            ]);
+            if ($request->has('breaks')) {
+                foreach ($request->breaks as $break) {
+                    if (empty($break['start']) && empty($break['end'])) {
+                        continue;
+                    }
+                    BreakTimeRequest::create([
+                        'attendance_request_id' => $attendanceRequest->id,
+                        'break_time_id' => $break['id'] ?? null,
+                        'requested_break_start' => !empty($break['start']) ? Carbon::parse("$date {$break['start']}") : null,
+                        'requested_break_end'   => !empty($break['end']) ? Carbon::parse("$date {$break['end']}") : null,
 
-        // attendances は更新しない＝修正申請として保存
-        $attendanceRequest = AttendanceRequest::create([
-            'attendance_id'       => $attendance->id,
-            'user_id'             => auth()->id(),
-            'requested_clock_in'  => Carbon::parse("$date {$request->clock_in}"),
-            'requested_clock_out' => Carbon::parse("$date {$request->clock_out}"),
-            'reason'              => $request->reason,
-            'status'              => 'pending',
-        ]);
-
-        // break_time_requests を全て作成
-        if ($request->has('breaks')) {
-            foreach ($request->breaks as $break) {
-                // 休憩欄が空なら skip
-                if (empty($break['start']) && empty($break['end'])) {
-                    continue;
+                    ]);
                 }
-
-                BreakTimeRequest::create([
-                    'attendance_request_id' => $attendanceRequest->id,
-                    'break_time_id'         => null, // 元BreakTimeと紐づけない場合
-                    'requested_break_start' => isset($break['start']) ? Carbon::parse("$date {$break['start']}") : null,
-                    'requested_break_end'   => isset($break['end']) ? Carbon::parse("$date {$break['end']}") : null,
-                ]);
             }
-        }
-
+        });
         return redirect()
             ->route('attendance.detail', $attendance->id)
             ->with('success', '修正申請を送信しました');
