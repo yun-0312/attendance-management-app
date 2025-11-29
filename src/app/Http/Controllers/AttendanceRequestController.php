@@ -7,79 +7,25 @@ use Illuminate\Http\Request;
 
 class AttendanceRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    public function list () {
+        $pending = AttendanceRequest::with(['user', 'attendance'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $approved = AttendanceRequest::with(['user', 'attendance'])
+            ->where('status', 'approved')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user.request.list', compact('pending', 'approved'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function detail(AttendanceRequest $attendanceRequest)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\AttendanceRequest  $attendanceRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function show(AttendanceRequest $attendanceRequest)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\AttendanceRequest  $attendanceRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(AttendanceRequest $attendanceRequest)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\AttendanceRequest  $attendanceRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, AttendanceRequest $attendanceRequest)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\AttendanceRequest  $attendanceRequest
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(AttendanceRequest $attendanceRequest)
-    {
-        //
+        $attendance = $attendanceRequest->attendance;
+        $breaks = $attendanceRequest->breakTimeRequests()->orderBy('requested_break_start')->get();
+        $pendingRequest = $attendanceRequest;
+        return view('user.attendance.detail', compact('attendance', 'breaks', 'pendingRequest', 'attendanceRequest'));
     }
 }

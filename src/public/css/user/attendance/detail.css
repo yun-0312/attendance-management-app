@@ -166,3 +166,124 @@ body {
     font-weight: 700;
     pointer-events: none;
 }
+
+/* ================================
+   ▼ Tablet (768px〜850px)
+================================ */
+@media (max-width: 850px) and (min-width: 768px) {
+
+    .detail-container {
+        width: 700px;
+        padding: 0 15px;
+    }
+
+    .detail-title {
+        font-size: 26px;
+    }
+
+    .detail-table__header {
+        padding-left: 40px;
+        font-size: 14px;
+    }
+
+    .detail-table__data {
+        padding-left: 100px;
+        font-size: 14px;
+    }
+
+    .detail-table__data-item:first-child {
+        margin-right: 90px;
+    }
+
+    .time-row {
+        gap: 25px;
+    }
+
+    .time__input {
+        width: 85px;
+    }
+
+    .detail-textarea {
+        width: 75%;
+        font-size: 14px;
+        height: 80px;
+    }
+
+    .readonly-textarea {
+        font-size: 14px;
+    }
+
+    .detail-edit-btn {
+        padding: 10px 35px;
+        font-size: 18px;
+    }
+}
+
+/* ==========================================
+   ▼ Smartphone (〜767px)
+========================================== */
+@media (max-width: 767px) {
+
+    .detail-container {
+        width: 100%;
+        padding: 0 10px;
+        margin: 50px auto;
+    }
+
+    .detail-title {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+
+    table.detail-table {
+        font-size: 12px;
+    }
+
+    .detail-table__header {
+        padding-left: 20px;
+        width: 35%;
+        font-size: 12px;
+    }
+
+    .detail-table__data {
+        padding-left: 20px;
+        font-size: 12px;
+    }
+
+    .detail-table__data-item:first-child {
+        margin-right: 40px;
+    }
+
+    .time-row {
+        gap: 15px;
+    }
+
+    .time-separator {
+        font-size: 14px;
+    }
+
+    .time__input {
+        width: 70px;
+        font-size: 12px;
+    }
+
+    .readonly-input {
+        font-size: 12px;
+    }
+
+    .detail-textarea {
+        width: 90%;
+        height: 70px;
+        font-size: 12px;
+    }
+
+    .readonly-textarea {
+        font-size: 12px;
+        padding: 0;
+    }
+
+    .detail-edit-btn {
+        padding: 10px 25px;
+        font-size: 16px;
+    }
+}

@@ -5,17 +5,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceRequestController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -76,5 +67,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/attendance/detail/{attendance}', [AttendanceController::class, 'update'])
         ->name('attendance.update')
         ->middleware('auth');
+
+    // 申請一覧（一般ユーザー）
+    Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'list'])->name('attendance_request.list');
+
+    // 申請詳細（一般ユーザー）
+    Route::get('/stamp_correction_request/detail/{attendanceRequest}', [AttendanceRequestController::class, 'detail'])->name('attendanceRequest.detail');
 });
 

@@ -14,9 +14,34 @@
     {{ session('success') }}
 </p>
 @endif
+@php
+    $attendanceRequest = $attendanceRequest ?? $pendingRequest ?? null;
+        if (!isset($attendance) && $attendanceRequest) {
+        $attendance = $attendanceRequest->attendance;
+    }
+
+    if (!isset($attendance) || !$attendance) {
+    echo "<script>
+        window.location.href = '/attendance';
+    </script>";
+    exit;
+    }
+
+    if ($attendanceRequest) {
+        $breaks = $attendanceRequest->breakTimeRequests()->orderBy('requested_break_start')->get();
+    } else {
+        $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
+    }
+@endphp
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
-    <form class="detail__form" action="{{ route('attendance.update', ['attendance' => $attendance->id])}}" method="post">
+    <form class="detail__form"
+        @if(isset($attendance))
+        action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}"
+        @else
+        action=""
+        @endif
+        method="post">
         @csrf
         @method('PATCH')
         <table class="detail-table">
