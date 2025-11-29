@@ -25,7 +25,6 @@ class AttendanceRequestController extends Controller
     {
         $attendance = $attendanceRequest->attendance;
         $breaks = $attendanceRequest->breakTimeRequests()->orderBy('requested_break_start')->get();
-        $pendingRequest = $attendanceRequest;
-        return view('user.attendance.detail', compact('attendance', 'breaks', 'pendingRequest', 'attendanceRequest'));
+        return view('user.request.detail', compact('attendance', 'breaks', 'attendanceRequest'));
     }
 }

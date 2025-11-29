@@ -20,6 +20,11 @@ class AttendanceRequest extends Model
         'approved_by',
     ];
 
+    protected $casts = [
+        'requested_clock_in'  => 'datetime',
+        'requested_clock_out' => 'datetime',
+    ];
+
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);
