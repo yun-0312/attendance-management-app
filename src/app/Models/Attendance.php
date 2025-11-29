@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\AttendanceRequest;
 
 class Attendance extends Model
 {
@@ -37,6 +39,11 @@ class Attendance extends Model
     public function attendanceRequests()
     {
         return $this->hasMany(AttendanceRequest::class);
+    }
+
+    public function breakTimeRequests()
+    {
+        return $this->hasMany(BreakTimeRequest::class);
     }
 
     public function getCurrentStatusAttribute()
@@ -124,5 +131,83 @@ class Attendance extends Model
     public static function nextMonth($year, $month)
     {
         return self::monthDate($year, $month)->addMonth();
+    }
+
+    //変更があるかチェック
+    public function isChangedFromOriginal($request)
+    {
+        $date = $this->work_date->toDateString();
+        // 出勤・退勤チェック
+        $newClockIn  = Carbon::parse("$date {$request->clock_in}");
+        $newClockOut = Carbon::parse("$date {$request->clock_out}");
+        if (!$this->clock_in->equalTo($newClockIn)) {
+            return true;
+        }
+        if (!$this->clock_out->equalTo($newClockOut)) {
+            return true;
+        }
+        // 休憩チェック
+        $breaks = $request->breaks ?? [];
+        foreach ($breaks as $index => $break) {
+            // 新規追加された休憩
+            if (!empty($break['start']) || !empty($break['end'])) {
+                if (!isset($this->breakTimes[$index])) {
+                    return true;
+                }
+            }
+            // 既存の休憩の変更チェック
+            if (isset($this->breakTimes[$index])) {
+                $oldStart = optional($this->breakTimes[$index]->break_start)->format('H:i');
+                $oldEnd   = optional($this->breakTimes[$index]->break_end)->format('H:i');
+
+                $newStart = $break['start'] ?? null;
+                $newEnd   = $break['end'] ?? null;
+
+                if ($oldStart !== $newStart || $oldEnd !== $newEnd) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //変更テーブル作成
+    public function createRequestFromUpdate($request)
+    {
+        $date = $this->work_date->toDateString();
+
+        DB::transaction(function () use ($request, $date) {
+
+            $attendanceRequest = AttendanceRequest::create([
+                'attendance_id' => $this->id,
+                'user_id' => auth()->id(),
+                'requested_clock_in' => Carbon::parse("$date {$request->clock_in}"),
+                'requested_clock_out' => Carbon::parse("$date {$request->clock_out}"),
+                'reason' => $request->reason,
+                'status' => 'pending',
+            ]);
+
+            foreach ($request->breaks ?? [] as $break) {
+                if (empty($break['start']) && empty($break['end'])) {
+                    continue;
+                }
+
+                BreakTimeRequest::create([
+                    'attendance_request_id' => $attendanceRequest->id,
+                    'break_time_id' => $break['id'] ?? null,
+                    'requested_break_start' => !empty($break['start']) ? Carbon::parse("$date {$break['start']}") : null,
+                    'requested_break_end'   => !empty($break['end']) ? Carbon::parse("$date {$break['end']}") : null,
+                ]);
+            }
+        });
+    }
+
+    //修正申告が未承認の場合、承認待ちの情報取得
+    public function latestPendingRequest() {
+        return $this->attendanceRequests()
+            ->where('status', 'pending')
+            ->latest()
+            ->with('breakTimeRequests')
+            ->first();
     }
 }

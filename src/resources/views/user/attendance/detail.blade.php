@@ -35,9 +35,9 @@
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="text" name="clock_in" class="time__input" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
+                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
-                        <input type="text"  name="clock_out" class="time__input" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}">
+                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
@@ -53,22 +53,22 @@
             </tr>
             @foreach($breaks as $i => $break)
             <tr class="detail-table__column">
-                <th class="detail-table__header">休憩{{ ++$i }}</th>
+                <th class="detail-table__header">休憩{{ $i + 1 }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
                         <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
-                        <input type="test" name="breaks[{{ $i }}][start]" class="time__input"
-                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}">
+                        <input type="text" name="breaks[{{ $i }}][start]" class="time__input @if($pendingRequest) readonly-input @endif"
+                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
-                        <input type="text" name="breaks[{{ $i }}][end]" class="time__input"
-                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}">
+                        <input type="text" name="breaks[{{ $i }}][end]" class="time__input @if($pendingRequest) readonly-input @endif"
+                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                     </div>
-                    @error('breaks.$i.start')
+                    @error("breaks.$i.start")
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
                     @enderror
-                    @error('breaks.$i.end')
+                    @error("breaks.$i.end")
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
@@ -76,40 +76,53 @@
                 </td>
             </tr>
             @endforeach
+            @if(!$pendingRequest)
+            @php
+            $newIndex = count($breaks);
+            @endphp
             <tr class="detail-table__column">
-                <th class="detail-table__header">休憩{{ count($breaks) + 1 }}</th>
+                <th class="detail-table__header">休憩{{ $newIndex + 1 }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="text" name="breaks[{{ count($breaks) }}][start]" class="time__input" value="{{ old("breaks.$i.start") }}">
+                        <input type="text" name="breaks[{{ $newIndex }}][start]" class="time__input" value="{{ old("breaks.$newIndex.start") }}">
                         <span class="time-separator">～</span>
-                        <input type="text" name="breaks[{{ count($breaks) }}][end]" class="time__input" value="{{ old("breaks.$i.start") }}">
+                        <input type="text" name="breaks[{{ $newIndex }}][end]" class="time__input" value="{{ old("breaks.$newIndex.end") }}">
                     </div>
-                    @error('breaks.*.start')
+                    @error("breaks.$newIndex.start")
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
                     @enderror
-                    @error('breaks.*.end')
+                    @error("breaks.$newIndex.end")
                     <p class="detail-form__error-message">
                         {{ $message }}
                     </p>
                     @enderror
                 </td>
             </tr>
+            @endif
             <tr class="detail-table__column">
                 <th class="detail-table__header">備考</th>
                 <td class="detail-table__data">
-                    <textarea name="reason" rows="4" class="detail-textarea">{{ old('reason') }}</textarea>
-                    @error('reason')
-                    <p class="detail-form__error-message">
-                        {{ $message }}
-                    </p>
-                    @enderror
+                    <div class="textarea-wrapper @if($pendingRequest) readonly-mode @endif">
+                        <textarea name="reason" rows="4" class="detail-textarea  @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>
+                        {{ $pendingRequest ? $pendingRequest->reason : old('reason') }}
+                        </textarea>
+                        @error('reason')
+                        <p class="detail-form__error-message">
+                            {{ $message }}
+                        </p>
+                        @enderror
+                    </div>
                 </td>
             </tr>
         </table>
         <div class="detail-footer">
+            @if($pendingRequest)
+            <p class="pending-message">※承認待ちのため修正はできません。</p>
+            @else
             <button type="submit" class="detail-edit-btn">修正</button>
+            @endif
         </div>
     </form>
 </div>

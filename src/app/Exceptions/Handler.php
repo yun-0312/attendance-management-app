@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\Access\AuthorizationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -37,5 +38,18 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception) {
+        // 403（認可エラー）はトップの勤怠画面に飛ばす
+        if ($exception instanceof AuthorizationException) {
+            // ログインしているか？
+            if (auth()->check()) {
+                return redirect()->route('attendance.index');
+            }
+            // 未ログインならログインページへ
+            return redirect()->route('login');
+        }
+        return parent::render($request, $exception);
     }
 }

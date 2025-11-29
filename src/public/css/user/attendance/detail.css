@@ -106,6 +106,63 @@ body {
     opacity: 0.7;
 }
 
+.pending-message {
+    color: rgba(255, 0, 0, 0.5);
+    font-weight: 800;
+    font-size: 18px;
+}
+
 .detail-form__error-message {
     color: red;
+    font-weight: 400;
+}
+
+.success-message {
+    color: blue;
+}
+
+.readonly-input {
+    background: none;
+    border: none;
+    padding-left: 0;
+    color: #000000;
+    font-weight: 700;
+    font-size: 16px;
+    width: 50px;
+}
+
+.readonly-input[name$="[end]"],
+.readonly-input[name="clock_out"] {
+    margin-left: 30px;
+}
+
+.readonly-input[name$="[start]"],
+.readonly-input[name="clock_in"] {
+    margin-right: 30px;
+}
+
+.readonly-input:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+.textarea-wrapper.readonly-mode {
+    display: flex;
+    align-items: center;
+    width: 63%;
+    height: 65px;
+}
+
+.readonly-textarea {
+    background: none;
+    border: none;
+    resize: none;
+    padding: 0;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: #000000;
+    font-weight: 700;
+    pointer-events: none;
 }

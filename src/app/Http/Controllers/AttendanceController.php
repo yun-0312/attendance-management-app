@@ -87,39 +87,24 @@ class AttendanceController extends Controller
         if ($attendance->user_id !== auth()->id()) {
             abort(403);
         }
+        $pendingRequest = $attendance->latestPendingRequest();
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('user.attendance.detail', compact('attendance', 'breaks'));
+        return view('user.attendance.detail', compact('attendance', 'breaks', 'pendingRequest'));
     }
 
-    public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
+    public function update(UpdateAttendanceRequest $request, Attendance $attendance)
+    {
         if ($attendance->user_id !== auth()->id()) {
             abort(403);
         }
-        $date = $attendance->work_date->toDateString();
-        DB::transaction(function () use ($request, $attendance, $date) {
-            $attendanceRequest = AttendanceRequest::create([
-                'attendance_id' => $attendance->id,
-                'user_id' => auth()->id(),
-                'requested_clock_in' => Carbon::parse("$date {$request->clock_in}"),
-                'requested_clock_out' => Carbon::parse("$date {$request->clock_out}"),
-                'reason' => $request->reason,
-                'status' => 'pending',
-            ]);
-            if ($request->has('breaks')) {
-                foreach ($request->breaks as $break) {
-                    if (empty($break['start']) && empty($break['end'])) {
-                        continue;
-                    }
-                    BreakTimeRequest::create([
-                        'attendance_request_id' => $attendanceRequest->id,
-                        'break_time_id' => $break['id'] ?? null,
-                        'requested_break_start' => !empty($break['start']) ? Carbon::parse("$date {$break['start']}") : null,
-                        'requested_break_end'   => !empty($break['end']) ? Carbon::parse("$date {$break['end']}") : null,
-
-                    ]);
-                }
-            }
-        });
+        // ★変更がなければリダイレクトだけする
+        if (!$attendance->isChangedFromOriginal($request)) {
+            return redirect()
+                ->route('attendance.detail', $attendance->id)
+                ->with('success', '変更がありませんでした');
+        }
+        // ★変更があるときだけ Request を作る
+        $attendance->createRequestFromUpdate($request);
         return redirect()
             ->route('attendance.detail', $attendance->id)
             ->with('success', '修正申請を送信しました');
