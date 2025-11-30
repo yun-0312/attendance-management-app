@@ -16,13 +16,7 @@
 @endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
-    <form class="detail__form"
-        @if(isset($attendance))
-        action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}"
-        @else
-        action=""
-        @endif
-        method="post">
+    <form class="detail__form" action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="post">
         @csrf
         @method('PATCH')
         <table class="detail-table">
@@ -111,9 +105,7 @@
                 <th class="detail-table__header">備考</th>
                 <td class="detail-table__data">
                     <div class="textarea-wrapper @if($pendingRequest) readonly-mode @endif">
-                        <textarea name="reason" rows="4" class="detail-textarea  @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>
-                        {{ $pendingRequest ? $pendingRequest->reason : old('reason') }}
-                        </textarea>
+                        <textarea name="reason" rows="4" class="detail-textarea  @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>{{ $pendingRequest ? $pendingRequest->reason : old('reason') }}</textarea>
                         @error('reason')
                         <p class="detail-form__error-message">
                             {{ $message }}
