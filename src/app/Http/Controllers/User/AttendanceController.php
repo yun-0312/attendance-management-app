@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Carbon\CarbonPeriod;
 use App\Http\Requests\UpdateAttendanceRequest;
-use App\Models\AttendanceRequest;
-use App\Models\BreakTimeRequest;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
