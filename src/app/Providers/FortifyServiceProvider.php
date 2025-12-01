@@ -15,6 +15,7 @@ use Laravel\Fortify\Contracts\LogoutResponse;
 use App\Http\Responses\RegisterResponse as CustomRegisterResponse;
 use App\Http\Responses\LoginResponse as CustomLoginResponse;
 use App\Http\Responses\LogoutResponse as CustomLogoutResponse;
+use App\Models\User;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,9 @@ class FortifyServiceProvider extends ServiceProvider
             return view('user.auth.register');
         });
         Fortify::loginView(function () {
+            if (request()->is('admin/login')) {
+                return view('admin.auth.login');
+            }
             return view('user.auth.login');
         });
         Fortify::verifyEmailView(function () {
@@ -50,9 +54,18 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function ($request) {
             $user = \App\Models\User::where('email', $request->email)->first();
 
-            if ($user && \Hash::check($request->password, $user->password)) {
-                return $user;
+            if (! $user || ! \Hash::check($request->password, $user->password)) {
+                return null;
             }
+
+            // ★ 管理者ログイン画面からのログインの場合
+            if ($request->input('is_admin_login') == 1) {
+                if ($user->role !== 'admin') {
+                    return null;
+                }
+            }
+
+            return $user;
         });
         Fortify::redirects('login', function () {
             $user = Auth::user();

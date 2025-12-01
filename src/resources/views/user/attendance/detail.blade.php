@@ -35,9 +35,9 @@
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_in" class="time__input" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
                         <span class="time-separator">～</span>
-                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_out" class="time__input" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}">
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
@@ -57,11 +57,11 @@
                 <td class="detail-table__data">
                     <div class="time-row">
                         <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
-                        <input type="text" name="breaks[{{ $i }}][start]" class="time__input @if($pendingRequest) readonly-input @endif"
-                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="breaks[{{ $i }}][start]" class="time__input"
+                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}">
                         <span class="time-separator">～</span>
-                        <input type="text" name="breaks[{{ $i }}][end]" class="time__input @if($pendingRequest) readonly-input @endif"
-                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="breaks[{{ $i }}][end]" class="time__input"
+                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}">
                     </div>
                     @error("breaks.$i.start")
                     <p class="detail-form__error-message">
@@ -76,7 +76,6 @@
                 </td>
             </tr>
             @endforeach
-            @if(!$pendingRequest)
             @php
             $newIndex = count($breaks);
             @endphp
@@ -100,12 +99,11 @@
                     @enderror
                 </td>
             </tr>
-            @endif
             <tr class="detail-table__column">
                 <th class="detail-table__header">備考</th>
                 <td class="detail-table__data">
-                    <div class="textarea-wrapper @if($pendingRequest) readonly-mode @endif">
-                        <textarea name="reason" rows="4" class="detail-textarea  @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>{{ $pendingRequest ? $pendingRequest->reason : old('reason') }}</textarea>
+                    <div class="textarea-wrapper">
+                        <textarea name="reason" rows="4" class="detail-textarea">{{ old('reason') }}</textarea>
                         @error('reason')
                         <p class="detail-form__error-message">
                             {{ $message }}
@@ -116,11 +114,7 @@
             </tr>
         </table>
         <div class="detail-footer">
-            @if($pendingRequest)
-            <p class="pending-message">※承認待ちのため修正はできません。</p>
-            @else
             <button type="submit" class="detail-edit-btn">修正</button>
-            @endif
         </div>
     </form>
 </div>

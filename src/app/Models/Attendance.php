@@ -48,15 +48,12 @@ class Attendance extends Model
 
     public function getCurrentStatusAttribute()
     {
-        // 退勤済
         if ($this->clock_out) {
             return '退勤済';
         }
-        // 休憩中：break_times の中で break_end が null のものがある
         if ($this->breakTimes()->whereNull('break_end')->exists()) {
             return '休憩中';
         }
-        // 出勤中（clock_in はあるが clock_out がない）
         if ($this->clock_in && !$this->clock_out) {
             return '勤務中';
         }

@@ -88,8 +88,13 @@ class AttendanceController extends Controller
             abort(403);
         }
         $pendingRequest = $attendance->latestPendingRequest();
+        if ($pendingRequest) {
+            return redirect()->route('attendanceRequest.detail', [
+                'attendanceRequest' => $pendingRequest->id
+            ]);
+        }
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('user.attendance.detail', compact('attendance', 'breaks', 'pendingRequest'));
+        return view('user.attendance.detail', compact('attendance', 'breaks'));
     }
 
     public function update(UpdateAttendanceRequest $request, Attendance $attendance)
@@ -97,13 +102,13 @@ class AttendanceController extends Controller
         if ($attendance->user_id !== auth()->id()) {
             abort(403);
         }
-        // ★変更がなければリダイレクトだけする
+        // 変更がなければリダイレクトだけする
         if (!$attendance->isChangedFromOriginal($request)) {
             return redirect()
                 ->route('attendance.detail', $attendance->id)
                 ->with('success', '変更がありませんでした');
         }
-        // ★変更があるときだけ Request を作る
+        // 変更があるときだけ Request を作る
         $attendance->createRequestFromUpdate($request);
         return redirect()
             ->route('attendance.detail', $attendance->id)

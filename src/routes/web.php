@@ -75,3 +75,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stamp_correction_request/detail/{attendanceRequest}', [AttendanceRequestController::class, 'detail'])->name('attendanceRequest.detail');
 });
 
+// 管理者ログインページ
+Route::get('/admin/login', function () {
+    return view('admin.auth.login');
+})->name('admin.login');
+
+// 管理者専用
+Route::middleware(['auth', 'is_admin'])->group(function () {
+    
+});
