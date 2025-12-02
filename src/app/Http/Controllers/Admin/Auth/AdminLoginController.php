@@ -23,9 +23,7 @@ class AdminLoginController extends Controller
                 'email' => '管理者情報が一致しません。',
             ]);
         }
-
         $request->session()->regenerate();
-
         return redirect()->route('admin.list');
     }
 }

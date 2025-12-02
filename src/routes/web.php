@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AttendanceRequestController;
-
+use App\Http\Controllers\User\Auth\LoginController;
+use App\Http\Controllers\User\AttendanceController;
+use App\Http\Controllers\User\AttendanceRequestController;
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -76,9 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // 管理者ログインページ
-Route::get('/admin/login', function () {
-    return view('admin.auth.login');
-})->name('admin.login');
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+
+// 管理者ログイン処理
+Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin.login.store');
 
 // 管理者専用
 Route::middleware(['auth', 'is_admin'])->group(function () {

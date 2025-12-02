@@ -11,7 +11,7 @@
 @section('content')
 <div class="content-wrapper">
     <h2 class="login-form__heading">管理者ログイン</h2>
-    <form class="form" action="{{ route('login') }}" method="post">
+    <form class="form" action="{{ route('admin.login') }}" method="post">
         @csrf
         <input type="hidden" name="is_admin_login" value="1">
         <div class="login-form__group">
