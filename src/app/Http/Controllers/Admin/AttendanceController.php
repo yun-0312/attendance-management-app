@@ -11,7 +11,9 @@ use Carbon\Carbon;
 class AttendanceController extends Controller
 {
     public function list (Request $request) {
-        $date = $request->input('date', Carbon::today()->toDateString());
+        $date = $request->input('date')
+            ? Carbon::parse($request->input('date'))
+            : Carbon::today();
         $attendances = Attendance::with('user', 'breakTimes')
             ->whereDate('work_date', $date)
             ->orderBy('user_id')
