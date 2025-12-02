@@ -7,6 +7,7 @@ use App\Http\Controllers\User\Auth\LoginController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\AttendanceRequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -82,6 +83,9 @@ Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name
 Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin.login.store');
 
 // 管理者専用
-Route::middleware(['auth', 'is_admin'])->group(function () {
-    
+Route::prefix('admin')
+    ->middleware(['is_admin'])
+    ->group(function () {
+        Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'list'])
+            ->name('admin.attendance.list');
 });
