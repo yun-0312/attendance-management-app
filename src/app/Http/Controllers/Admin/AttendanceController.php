@@ -31,7 +31,7 @@ class AttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance', 'breaks'));
     }
 
-        public function update (Request $request, Attendance $attendance) {
+        public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
         DB::transaction(function () use ($request, $attendance) {
             // 勤怠の更新
             $attendance->update([
