@@ -9,7 +9,7 @@ use App\Models\User;
 class StaffController extends Controller
 {
     public function index () {
-        $users = User::orderBy('id')->get();
+        $users = User::where('role', 'user')->orderBy('id')->get();
         return view('admin.staff.index', compact('users'));
     }
 }
