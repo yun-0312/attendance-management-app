@@ -86,6 +86,18 @@ Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin
 Route::prefix('admin')
     ->middleware(['is_admin'])
     ->group(function () {
-        Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'list'])
+
+    // 勤怠一覧（管理者）
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'list'])
             ->name('admin.attendance.list');
+
+    // 勤怠詳細画面（管理者）
+    Route::get('/admin/attendance/detail/{attendance}', [AdminAttendanceController::class, 'detail'])
+        ->name('admin.attendance.detail')
+        ->middleware('auth:admin');
+
+    // 勤怠詳細修正処理（管理者）
+    Route::patch('/admin/attendance/detail/{attendance}', [AdminAttendanceController::class, 'update'])
+        ->name('admin.attendance.update')
+        ->middleware('auth:admin');
 });

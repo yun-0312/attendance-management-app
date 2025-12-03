@@ -14,9 +14,7 @@
     <div class="month-nav">
         <a href="{{ route('attendance.list', ['year' => $prevMonth->year, 'month' => $prevMonth->month]) }}"
             class="month-nav__link"><span class="month-nav__link-item">←</span> 前月</a>
-
         <span class="month-nav__current">{{ $year }}/{{ $month }}</span>
-
         <a href="{{ route('attendance.list', ['year' => $nextMonth->year, 'month' => $nextMonth->month]) }}"
             class="month-nav__link">翌月 <span class="month-nav__link-item">→</span></a>
     </div>

@@ -1,0 +1,152 @@
+body {
+    background-color: #E1E1E1;
+}
+
+.list-container {
+    margin: 90px auto;
+    width: 900px;
+    padding: 0 20px;
+}
+
+.list-title {
+    border-left: 8px solid #000000;
+    padding-left: 18px;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.date-nav {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 14px 25px;
+    border-radius: 10px;
+    margin-bottom: 45px;
+    font-size: 18px;
+}
+
+.date-nav__link {
+    color: #737373;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.date-nav__link-item {
+    margin: 0 5px;
+}
+
+.date-selector {
+    margin-bottom: 25px;
+}
+
+.date-selector__form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.calendar-icon {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #FFF;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.date-selector__input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.selected-date {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.list-table {
+    width: 100%;
+    background: #fff;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.list-table__header,
+.list-table__data {
+    border-bottom: 2px solid #E1E1E1;
+    font-size: 16px;
+    font-weight: 700;
+    color: #737373;
+    height: 46px;
+}
+
+.column-name {
+    width: 20%;
+}
+
+.column-time,
+.column-detail {
+    width: 15%;
+}
+
+.list-table__link {
+    text-decoration: none;
+    color: #000000;
+}
+
+/* ================================
+▼ Tablet (768px〜850px)
+================================ */
+@media (max-width: 850px) and (min-width: 768px) {
+
+    .list-container {
+        width: 700px;
+        padding: 0 15px;
+    }
+
+    .list-title {
+        font-size: 26px;
+    }
+
+    .list-table__header,
+    .list-table__data {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .list-container {
+        width: 100%;
+        padding: 0 10px;
+        margin: 50px auto;
+    }
+
+    .list-title {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+
+    .list-table {
+        font-size: 12px;
+    }
+
+    .list-table__header,
+    .list-table__data {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+}
