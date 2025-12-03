@@ -16,7 +16,7 @@
 @endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
-    <form class="detail__form" action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="post">
+    <form class="detail__form" action="{{ route('admin.attendance.update', ['attendance' => $attendance->id]) }}" method="post">
         @csrf
         @method('PATCH')
         <table class="detail-table">

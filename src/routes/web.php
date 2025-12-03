@@ -88,16 +88,16 @@ Route::prefix('admin')
     ->group(function () {
 
     // 勤怠一覧（管理者）
-    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'list'])
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'list'])
             ->name('admin.attendance.list');
 
     // 勤怠詳細画面（管理者）
-    Route::get('/admin/attendance/detail/{attendance}', [AdminAttendanceController::class, 'detail'])
+    Route::get('/attendance/{attendance}', [AdminAttendanceController::class, 'detail'])
         ->name('admin.attendance.detail')
         ->middleware('auth:admin');
 
     // 勤怠詳細修正処理（管理者）
-    Route::patch('/admin/attendance/detail/{attendance}', [AdminAttendanceController::class, 'update'])
+    Route::patch('/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
         ->name('admin.attendance.update')
         ->middleware('auth:admin');
 });

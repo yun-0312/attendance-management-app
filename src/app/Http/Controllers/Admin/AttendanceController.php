@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Http\Requests\UpdateAttendanceRequest;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -30,16 +31,40 @@ class AttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance', 'breaks'));
     }
 
-    public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
-        if (!$attendance->isChangedFromOriginal($request)) {
-            return redirect()
-                ->route('admin.attendance.detail', $attendance->id)
-                ->with('success', '変更がありませんでした');
-        }
-        // 変更があるときだけ Request を作る
-        $attendance->createRequestFromUpdate($request);
+        public function update (Request $request, Attendance $attendance) {
+        DB::transaction(function () use ($request, $attendance) {
+            // 勤怠の更新
+            $attendance->update([
+                'clock_in'  => $request->clock_in,
+                'clock_out' => $request->clock_out,
+            ]);
+            foreach ($request->breaks ?? [] as $break) {
+                if (isset($break['id'])) {
+                    $breakModel = $attendance->breakTimes()->find($break['id']);
+                    if (empty($break['start']) && empty($break['end'])) {
+                        if ($breakModel) {
+                            $breakModel->delete();
+                        }
+                        continue;
+                    }
+                    if ($breakModel) {
+                        $breakModel->update([
+                            'break_start' => $break['start'],
+                            'break_end'   => $break['end'],
+                        ]);
+                    }
+                    continue;
+                }
+                if (!empty($break['start']) || !empty($break['end'])) {
+                    $attendance->breakTimes()->create([
+                        'break_start' => $break['start'],
+                        'break_end'   => $break['end'],
+                    ]);
+                }
+            }
+        });
         return redirect()
-            ->route('attendance.detail', $attendance->id)
+            ->route('admin.attendance.detail', $attendance->id)
             ->with('success', '勤怠を更新しました');
     }
 }

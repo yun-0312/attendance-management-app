@@ -1,6 +1,6 @@
 <header class="header">
     <div class="header-logo">
-        <a class="header-logo__link" href="{{ route('attendance.list') }}">
+        <a class="header-logo__link" href="{{ route('admin.attendance.list') }}">
             <img src="{{ asset('img/logo.svg') }}" alt="logo" class="header-logo__image">
         </a>
     </div>
