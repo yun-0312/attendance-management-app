@@ -8,6 +8,7 @@ use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\AttendanceRequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\StaffController;
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -100,4 +101,8 @@ Route::prefix('admin')
     Route::patch('/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
         ->name('admin.attendance.update')
         ->middleware('auth:admin');
+
+    // スタッフ一覧画面（管理者）
+    Route::get('/staff/list', [StaffController::class, 'index'])
+        ->name('admin.staff.index');
 });
