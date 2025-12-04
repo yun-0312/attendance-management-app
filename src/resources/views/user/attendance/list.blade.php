@@ -14,7 +14,24 @@
     <div class="month-nav">
         <a href="{{ route('attendance.list', ['year' => $prevMonth->year, 'month' => $prevMonth->month]) }}"
             class="month-nav__link"><span class="month-nav__link-item">←</span> 前月</a>
-        <span class="month-nav__current">{{ $year }}/{{ $month }}</span>
+        <div class="date-selector">
+            <form method="get" action="{{ route('attendance.list') }}" id="dateForm" class="date-selector__form">
+                <label class="calendar-icon">
+                    <input
+                        type="date"
+                        name="date"
+                        class="date-selector__input"
+                        value="{{ $date->format('Y-m-d') }}"
+                        onchange="document.getElementById('dateForm').submit();">
+                    <span class="icon">
+                        <img src="{{ asset('img/calender.png') }}" alt="calender">
+                    </span>
+                </label>
+                <span class="selected-date">
+                    {{ $date->format('Y/m') }}
+                </span>
+            </form>
+        </div>
         <a href="{{ route('attendance.list', ['year' => $nextMonth->year, 'month' => $nextMonth->month]) }}"
             class="month-nav__link">翌月 <span class="month-nav__link-item">→</span></a>
     </div>

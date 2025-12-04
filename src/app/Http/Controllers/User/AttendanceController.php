@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Http\Requests\UpdateAttendanceRequest;
 
@@ -63,20 +64,24 @@ class AttendanceController extends Controller
     }
 
     public function list (Request $request) {
-        $year = $request->input('year', now()->year);
-        $month = $request->input('month', now()->month);
-
+        if ($request->filled('date')) {
+            $date = Carbon::parse($request->input('date'));
+            $year = $date->year;
+            $month = $date->month;
+        } else {
+            $year = $request->input('year', now()->year);
+            $month = $request->input('month', now()->month);
+            $date = Carbon::create($year, $month, 1);
+        }
         $attendances = Attendance::forMonth(auth()->id(), $year, $month);
-
         $start = Attendance::monthDate($year, $month);
         $end   = $start->copy()->endOfMonth();
         $period = CarbonPeriod::create($start, $end);
-
         $prevMonth = Attendance::prevMonth($year, $month);
         $nextMonth = Attendance::nextMonth($year, $month);
 
         return view('user.attendance.list', compact(
-            'attendances','period','year','month','prevMonth','nextMonth'
+            'date', 'attendances','period','year','month','prevMonth','nextMonth'
         ));
     }
 
