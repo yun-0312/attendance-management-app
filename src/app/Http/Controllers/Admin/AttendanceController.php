@@ -71,9 +71,15 @@ class AttendanceController extends Controller
     }
 
     public function staffList (Request $request, User $user) {
-        $year = $request->input('year', now()->year);
-        $month = $request->input('month', now()->month);
-        $date = Carbon::create($year, $month, 1);
+        if ($request->filled('date')) {
+            $date = Carbon::parse($request->input('date'));
+            $year = $date->year;
+            $month = $date->month;
+        } else {
+            $year = $request->input('year', now()->year);
+            $month = $request->input('month', now()->month);
+            $date = Carbon::create($year, $month, 1);
+        }
         $attendances = Attendance::forMonth($user->id, $year, $month);
         $start = Attendance::monthDate($year, $month);
         $end   = $start->copy()->endOfMonth();
