@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Http\Requests\UpdateAttendanceRequest;
-use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
 {
@@ -90,5 +91,47 @@ class AttendanceController extends Controller
             'prevMonth',
             'nextMonth'
         ));
+    }
+
+    public function downloadCsv(Request $request, User $user)
+    {
+        $year = $request->input('year', now()->year);
+        $month = $request->input('month', now()->month);
+
+        $attendances = Attendance::forMonth($user->id, $year, $month);
+
+        $response = new StreamedResponse(function () use ($attendances) {
+            $handle = fopen('php://output', 'w');
+            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932');
+            // CSV のヘッダー
+            fputcsv($handle, [
+                '日付',
+                '出勤',
+                '退勤',
+                '休憩',
+                '合計',
+            ]);
+
+            // データ行
+            foreach ($attendances as $attendance) {
+                fputcsv($handle, [
+                    $attendance->work_date->format('Y-m-d'),
+                    optional($attendance->clock_in)->format('H:i'),
+                    optional($attendance->clock_out)->format('H:i'),
+                    $attendance->total_break_time,
+                    $attendance->total_work_time,
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        // ダウンロードファイル名
+        $fileName = "{$user->name}_{$year}_{$month}_attendance.csv";
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"$fileName\"");
+
+        return $response;
     }
 }

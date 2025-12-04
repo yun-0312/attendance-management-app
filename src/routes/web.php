@@ -108,4 +108,9 @@ Route::prefix('admin')
 
     Route::get('/attendance/staff/{user}', [AdminAttendanceController::class, 'staffList'])
         ->name('admin.staff.attendance');
+
+    Route::get(
+        '/admin/attendance/staff/{user}/csv',
+        [AdminAttendanceController::class, 'downloadCsv']
+    )->name('admin.staff.attendance.csv');
 });
