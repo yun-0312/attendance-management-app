@@ -1,34 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\AttendanceRequest;
 
 class AttendanceRequestController extends Controller
 {
     public function list () {
         $pending = AttendanceRequest::with(['user', 'attendance'])
-            ->where('user_id', auth()->id())
             ->where('status', 'pending')
             ->orderBy('requested_clock_in')
             ->get();
-
-        $approved = AttendanceRequest::with(['user', 'attendance'])
-            ->where('user_id', auth()->id())
+        $attendanceRequest =         $approved = AttendanceRequest::with(['user', 'attendance'])
             ->where('status', 'approved')
             ->orderBy('requested_clock_in')
             ->get();
-
-        return view('user.request.list', compact('pending', 'approved'));
+        return view('admin.request.list', compact('pending', 'approved'));
     }
 
-    public function detail (AttendanceRequest $attendanceRequest) {
-        if ($attendanceRequest->user_id !== auth()->id()) {
-            abort(403);
-        }
+    public function approve(AttendanceRequest $attendanceRequest)
+    {
         $attendance = $attendanceRequest->attendance;
         $breaks = $attendanceRequest->breakTimeRequests()->orderBy('requested_break_start')->get();
-        return view('user.request.detail', compact('attendance', 'breaks', 'attendanceRequest'));
+        return view('admin.request.approve', compact('attendance', 'breaks', 'attendanceRequest'));
     }
 }

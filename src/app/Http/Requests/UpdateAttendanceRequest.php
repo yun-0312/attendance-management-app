@@ -85,9 +85,14 @@ class UpdateAttendanceRequest extends FormRequest
                 $start = $break['start'] ?? null;
                 $end   = $break['end'] ?? null;
 
-                // ★ regex に通っていない入力はスキップ（Carbon で例外が出てしまうため）
+                // regex に通っていない入力はスキップ
                 if ($start && !$this->isValidTime($start)) continue;
                 if ($end && !$this->isValidTime($end)) continue;
+
+                // 終了だけある場合 → 開始必須
+                if ($end && empty($start)) {
+                    $validator->errors()->add("breaks.$index.start", '休憩開始時間を入力してください');
+                }
 
                 // 両方埋まっている時のみ判定する
                 if ($start && $end) {

@@ -9,6 +9,7 @@ use App\Http\Controllers\User\AttendanceRequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\AttendanceRequestController as AdminAttendanceRequestController;
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -115,4 +116,11 @@ Route::prefix('admin')
         '/admin/attendance/staff/{user}/csv',
         [AdminAttendanceController::class, 'downloadCsv']
     )->name('admin.staff.attendance.csv');
+
+    // 申請一覧画面（管理者）
+    Route::get('/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'list'])
+        ->name('attendance.request.list');
+
+    // 申請詳細（管理者）
+    Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])->name('attendanceRequest.approve');
 });
