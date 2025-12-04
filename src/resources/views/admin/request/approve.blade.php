@@ -11,23 +11,23 @@
 
 
 @section('content')
-<div class="detail-container">
-    <h2 class="detail-title">勤怠詳細</h2>
-    <table class="detail-table">
-        <tr class="detail-table__column">
-            <th class="detail-table__header">名前</th>
-            <td class="detail-table__data">{{ $attendanceRequest->user->name }}</td>
+<div class="approve-container">
+    <h2 class="approve-title">勤怠詳細</h2>
+    <table class="approve-table">
+        <tr class="approve-table__column">
+            <th class="approve-table__header">名前</th>
+            <td class="approve-table__data">{{ $attendanceRequest->user->name }}</td>
         </tr>
-        <tr class="detail-table__column">
-            <th class="detail-table__header">日付</th>
-            <td class="detail-table__data">
-                <span class="detail-table__data-item">{{ $attendance->work_date->format('Y年') }}</span>
-                <span class="detail-table__data-item">{{ $attendance->work_date->format('n月j日') }}</span>
+        <tr class="approve-table__column">
+            <th class="approve-table__header">日付</th>
+            <td class="approve-table__data">
+                <span class="approve-table__data-item">{{ $attendance->work_date->format('Y年') }}</span>
+                <span class="approve-table__data-item">{{ $attendance->work_date->format('n月j日') }}</span>
             </td>
         </tr>
-        <tr class="detail-table__column">
-            <th class="detail-table__header">出勤・退勤</th>
-            <td class="detail-table__data">
+        <tr class="approve-table__column">
+            <th class="approve-table__header">出勤・退勤</th>
+            <td class="approve-table__data">
                 <div class="time-row">
                     <p class="time__item">{{ $attendanceRequest->requested_clock_in->format('H:i') }}</p>
                     <span class="time-separator">～</span>
@@ -36,9 +36,9 @@
             </td>
         </tr>
         @foreach($breaks as $i => $break)
-        <tr class="detail-table__column">
-            <th class="detail-table__header">休憩{{ $i + 1 }}</th>
-            <td class="detail-table__data">
+        <tr class="approve-table__column">
+            <th class="approve-table__header">休憩{{ $i + 1 }}</th>
+            <td class="approve-table__data">
                 <div class="time-row">
                     <p class="time__item">{{ optional($break->requested_break_start)->format('H:i') }}</p>
                     <span class="time-separator">～</span>
@@ -47,15 +47,14 @@
             </td>
         </tr>
         @endforeach
-        <tr class="detail-table__column">
-            <th class="detail-table__header">申請理由</th>
-            <td class="detail-table__data">{{ $attendanceRequest->reason }}</td>
+        <tr class="approve-table__column">
+            <th class="approve-table__header">申請理由</th>
+            <td class="approve-table__data">{{ $attendanceRequest->reason }}</td>
         </tr>
     </table>
-    <div class="detail-footer">
-        @if($attendanceRequest->status === 'pending')
-        <p class="pending-message">※承認待ちのため修正はできません。</p>
-        @endif
+    <div class="approve-footer">
+        <form action="{{ route('attendanceRequest.update', $attendanceRequest->id) }}" method="post" class="approve__form">
+        <button type="submit" class="approve__btn">承認</button>
     </div>
 </div>
 @endsection

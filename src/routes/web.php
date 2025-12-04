@@ -115,12 +115,18 @@ Route::prefix('admin')
     Route::get(
         '/admin/attendance/staff/{user}/csv',
         [AdminAttendanceController::class, 'downloadCsv']
-    )->name('admin.staff.attendance.csv');
+    )
+        ->name('admin.staff.attendance.csv');
 
     // 申請一覧画面（管理者）
     Route::get('/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'list'])
         ->name('attendance.request.list');
 
-    // 申請詳細（管理者）
-    Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])->name('attendanceRequest.approve');
+    // 申請詳細承認用（管理者）
+    Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])
+        ->name('attendanceRequest.approve');
+
+    // 申請承認処理（管理者）
+    Route::patch('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'update'])
+        ->name('attendanceRequest.update');
 });
