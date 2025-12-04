@@ -105,4 +105,7 @@ Route::prefix('admin')
     // スタッフ一覧画面（管理者）
     Route::get('/staff/list', [StaffController::class, 'index'])
         ->name('admin.staff.index');
+
+    Route::get('/attendance/staff/{user}', [AdminAttendanceController::class, 'staffList'])
+        ->name('admin.staff.attendance');
 });

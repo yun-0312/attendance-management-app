@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Support\Facades\DB;
 
@@ -66,5 +67,28 @@ class AttendanceController extends Controller
         return redirect()
             ->route('admin.attendance.detail', $attendance->id)
             ->with('success', '勤怠を更新しました');
+    }
+
+    public function staffList (Request $request, User $user) {
+        $year = $request->input('year', now()->year);
+        $month = $request->input('month', now()->month);
+        $date = Carbon::create($year, $month, 1);
+        $attendances = Attendance::forMonth($user->id, $year, $month);
+        $start = Attendance::monthDate($year, $month);
+        $end   = $start->copy()->endOfMonth();
+        $period = CarbonPeriod::create($start, $end);
+        $prevMonth = Attendance::prevMonth($year, $month);
+        $nextMonth = Attendance::nextMonth($year, $month);
+
+        return view('admin.staff.attendance', compact(
+            'user',
+            'attendances',
+            'period',
+            'year',
+            'month',
+            'date',
+            'prevMonth',
+            'nextMonth'
+        ));
     }
 }

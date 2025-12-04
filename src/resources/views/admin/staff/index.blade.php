@@ -26,7 +26,7 @@
                 <td class="list-table__data column-name">{{ $user->name }}</td>
                 <td class="list-table__data column-time">{{ $user->email }}</td>
                 <td class="list-table__data column-detail">
-                    <a class="list-table__link" href="">詳細</a>
+                    <a class="list-table__link" href="{{ route('admin.staff.attendance', $user->id) }}">詳細</a>
                 </td>
             </tr>
             @endforeach
