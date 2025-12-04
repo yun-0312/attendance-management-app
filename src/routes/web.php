@@ -106,9 +106,11 @@ Route::prefix('admin')
     Route::get('/staff/list', [StaffController::class, 'index'])
         ->name('admin.staff.index');
 
+    // スタッフ別勤怠一覧画面（管理者）
     Route::get('/attendance/staff/{user}', [AdminAttendanceController::class, 'staffList'])
         ->name('admin.staff.attendance');
 
+    // スタッフ別勤怠一覧ｃｓｖ出力
     Route::get(
         '/admin/attendance/staff/{user}/csv',
         [AdminAttendanceController::class, 'downloadCsv']

@@ -93,45 +93,44 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function downloadCsv(Request $request, User $user)
-    {
+    public function downloadCsv (Request $request, User $user) {
         $year = $request->input('year', now()->year);
         $month = $request->input('month', now()->month);
-
         $attendances = Attendance::forMonth($user->id, $year, $month);
 
-        $response = new StreamedResponse(function () use ($attendances) {
-            $handle = fopen('php://output', 'w');
-            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932');
-            // CSV のヘッダー
-            fputcsv($handle, [
+        $start = Attendance::monthDate($year, $month);
+        $end   = $start->copy()->endOfMonth();
+        $period = CarbonPeriod::create($start, $end);
+
+        $filename = "{$user->name}_{$year}_{$month}.csv";
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+        $callback = function () use ($period, $attendances) {
+            $output = fopen('php://output', 'w');
+            stream_filter_prepend($output, 'convert.iconv.utf-8/cp932');
+            fputcsv($output, [
                 '日付',
                 '出勤',
                 '退勤',
                 '休憩',
                 '合計',
             ]);
+            foreach ($period as $date) {
+                $key = $date->format('Y-m-d');
+                $attendance = $attendances[$key] ?? null;
 
-            // データ行
-            foreach ($attendances as $attendance) {
-                fputcsv($handle, [
-                    $attendance->work_date->format('Y-m-d'),
-                    optional($attendance->clock_in)->format('H:i'),
-                    optional($attendance->clock_out)->format('H:i'),
-                    $attendance->total_break_time,
-                    $attendance->total_work_time,
+                fputcsv($output, [
+                    $date->locale('ja')->isoFormat('MM/DD(ddd)'),
+                    $attendance?->clock_in ? $attendance->clock_in->format('H:i') : '',
+                    $attendance?->clock_out ? $attendance->clock_out->format('H:i') : '',
+                    $attendance?->total_break_time ?? '',
+                    $attendance?->total_work_time ?? '',
                 ]);
             }
-
-            fclose($handle);
-        });
-
-        // ダウンロードファイル名
-        $fileName = "{$user->name}_{$year}_{$month}_attendance.csv";
-
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', "attachment; filename=\"$fileName\"");
-
-        return $response;
+            fclose($output);
+        };
+        return response()->stream($callback, 200, $headers);
     }
 }

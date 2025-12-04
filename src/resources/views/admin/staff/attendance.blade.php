@@ -70,9 +70,11 @@
             @endforeach
         </tbody>
     </table>
-    <a class="download__btn"
-        href="{{ route('admin.staff.attendance.csv', ['user' => $user->id, 'year' => $year, 'month' => $month]) }}">
-        CSV出力
-    </a>
+    <div class="csv-download__wrapper">
+        <a class="download__btn"
+            href="{{ route('admin.staff.attendance.csv', ['user' => $user->id, 'year' => $year, 'month' => $month]) }}">
+            CSV出力
+        </a>
+    </div>
 </div>
 @endsection
