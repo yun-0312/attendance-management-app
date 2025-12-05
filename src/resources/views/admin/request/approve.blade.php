@@ -53,7 +53,9 @@
         </tr>
     </table>
     <div class="approve-footer">
-        <form action="{{ route('attendanceRequest.update', $attendanceRequest->id) }}" method="post" class="approve__form">
+        <form action="{{ route('attendance.request.approve', $attendanceRequest->id) }}" method="post" class="approve__form">
+        @csrf
+        @method('PATCH')
         <button type="submit" class="approve__btn">承認</button>
     </div>
 </div>

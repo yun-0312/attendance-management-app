@@ -17,21 +17,21 @@ class AttendanceRequestController extends Controller
             ->where('status', 'pending')
             ->orderBy('requested_clock_in')
             ->get();
-        $attendanceRequest =         $approved = AttendanceRequest::with(['user', 'attendance'])
+        $approved = AttendanceRequest::with(['user', 'attendance'])
             ->where('status', 'approved')
             ->orderBy('requested_clock_in')
             ->get();
         return view('admin.request.list', compact('pending', 'approved'));
     }
 
-    public function approve(AttendanceRequest $attendanceRequest)
+    public function show (AttendanceRequest $attendanceRequest)
     {
         $attendance = $attendanceRequest->attendance;
         $breaks = $attendanceRequest->breakTimeRequests()->orderBy('requested_break_start')->get();
         return view('admin.request.approve', compact('attendance', 'breaks', 'attendanceRequest'));
     }
 
-    public function update (AttendanceRequest $attendanceRequest) {
+    public function approve (AttendanceRequest $attendanceRequest) {
         DB::transaction(function () use ($attendanceRequest) {
             $attendance = $attendanceRequest->attendance;
             $attendanceRequest->update([
@@ -59,7 +59,7 @@ class AttendanceRequestController extends Controller
             }
         });
         return redirect()
-            ->route('admin.request.list')
+            ->route('attendance.request.list')
             ->with('success', '修正申請を承認しました');
     }
 }

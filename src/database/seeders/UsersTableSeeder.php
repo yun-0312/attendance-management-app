@@ -18,6 +18,13 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             [
+                'name' => '管理者',
+                'email' => 'admin@test.com',
+                'email_verified_at' => new DateTime(),
+                'password' => Hash::make('testtest'),
+                'role' => 'admin'
+            ],
+            [
                 'name' => '鈴木　一郎',
                 'email' => 'user1@test.com',
                 'email_verified_at' => new DateTime(),
@@ -51,13 +58,6 @@ class UsersTableSeeder extends Seeder
                 'email_verified_at' => new DateTime(),
                 'password' => Hash::make('testtest'),
                 'role' => 'user',
-            ],
-            [
-                'name' => '管理者',
-                'email' => 'admin@test.com',
-                'email_verified_at' => new DateTime(),
-                'password' => Hash::make('testtest'),
-                'role' => 'admin'
             ],
         ]);
     }

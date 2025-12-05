@@ -123,10 +123,10 @@ Route::prefix('admin')
         ->name('attendance.request.list');
 
     // 申請詳細承認用（管理者）
-    Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])
-        ->name('attendanceRequest.approve');
+    Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'show'])
+        ->name('attendance.request.show');
 
     // 申請承認処理（管理者）
-    Route::patch('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'update'])
-        ->name('attendanceRequest.update');
+    Route::patch('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])
+        ->name('attendance.request.approve');
 });
