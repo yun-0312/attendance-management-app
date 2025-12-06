@@ -12,14 +12,12 @@ class AttendanceRequestController extends Controller
             ->where('user_id', auth()->id())
             ->where('status', 'pending')
             ->orderBy('requested_clock_in')
-            ->get();
-
+            ->paginate(9);
         $approved = AttendanceRequest::with(['user', 'attendance'])
             ->where('user_id', auth()->id())
             ->where('status', 'approved')
             ->orderBy('requested_clock_in')
-            ->get();
-
+            ->paginate(9);
         return view('user.request.list', compact('pending', 'approved'));
     }
 

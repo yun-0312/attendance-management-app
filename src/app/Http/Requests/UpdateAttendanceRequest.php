@@ -84,17 +84,11 @@ class UpdateAttendanceRequest extends FormRequest
 
                 $start = $break['start'] ?? null;
                 $end   = $break['end'] ?? null;
-
-                // regex に通っていない入力はスキップ
                 if ($start && !$this->isValidTime($start)) continue;
                 if ($end && !$this->isValidTime($end)) continue;
-
-                // 終了だけある場合 → 開始必須
                 if ($end && empty($start)) {
                     $validator->errors()->add("breaks.$index.start", '休憩開始時間を入力してください');
                 }
-
-                // 両方埋まっている時のみ判定する
                 if ($start && $end) {
                     $startTime = Carbon::createFromFormat('H:i', $start);
                     $endTime   = Carbon::createFromFormat('H:i', $end);
@@ -104,8 +98,6 @@ class UpdateAttendanceRequest extends FormRequest
                     }
                 }
             }
-
-            // ▼ 重複チェックも同様に safeCreateTime() を使う
             for ($i = 0; $i < count($breaks); $i++) {
 
                 if (empty($breaks[$i]['start']) || empty($breaks[$i]['end'])) {
@@ -115,13 +107,10 @@ class UpdateAttendanceRequest extends FormRequest
                 $startA = $this->safeCreateTime($breaks[$i]['start']);
                 $endA   = $this->safeCreateTime($breaks[$i]['end']);
                 if (!$startA || !$endA) continue;
-
                 for ($j = $i + 1; $j < count($breaks); $j++) {
-
                     if (empty($breaks[$j]['start']) || empty($breaks[$j]['end'])) {
                         continue;
                     }
-
                     $startB = $this->safeCreateTime($breaks[$j]['start']);
                     $endB   = $this->safeCreateTime($breaks[$j]['end']);
                     if (!$startB || !$endB) continue;
@@ -135,17 +124,11 @@ class UpdateAttendanceRequest extends FormRequest
         });
     }
 
-    /**
-     * 入力が H:i として有効かチェック
-     */
     private function isValidTime($value)
     {
         return preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/', $value);
     }
 
-    /**
-     * Carbon 生成（失敗時は null）
-     */
     private function safeCreateTime($value)
     {
         if (!$this->isValidTime($value)) return null;

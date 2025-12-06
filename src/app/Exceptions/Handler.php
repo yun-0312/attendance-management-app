@@ -41,13 +41,10 @@ class Handler extends ExceptionHandler
     }
 
     public function render($request, Throwable $exception) {
-        // 403（認可エラー）はトップの勤怠画面に飛ばす
         if ($exception instanceof AuthorizationException) {
-            // ログインしているか？
             if (auth()->check()) {
                 return redirect()->route('attendance.index');
             }
-            // 未ログインならログインページへ
             return redirect()->route('login');
         }
         return parent::render($request, $exception);

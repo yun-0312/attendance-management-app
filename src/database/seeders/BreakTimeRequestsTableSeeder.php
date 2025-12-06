@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\AttendanceRequest;
 use App\Models\BreakTimeRequest;
-use App\Models\BreakTime;
 use Carbon\Carbon;
 
 class BreakTimeRequestsTableSeeder extends Seeder
@@ -13,7 +12,7 @@ class BreakTimeRequestsTableSeeder extends Seeder
     public function run()
     {
         $attendanceRequests = AttendanceRequest::with('attendance.breakTimes')
-            ->where('status', 'pending')    
+            ->where('status', 'pending')
             ->get();
 
         foreach ($attendanceRequests as $attendanceRequest) {
@@ -38,7 +37,7 @@ class BreakTimeRequestsTableSeeder extends Seeder
                     'requested_break_start' => $newStart,
                     'requested_break_end'   => $newEnd,
                 ]);
-                
+
             }
             // 追加休憩（5%）
             if (rand(1, 100) <= 5) {

@@ -9,21 +9,6 @@ use App\Actions\Fortify\LoginResponse;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        //
-    }
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
     public function boot()
     {
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
