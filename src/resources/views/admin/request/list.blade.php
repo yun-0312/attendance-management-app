@@ -80,6 +80,7 @@
             </tbody>
         </table>
     </div>
+    {{ $approved->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
 </div>
 
 <script>

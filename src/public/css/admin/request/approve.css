@@ -75,11 +75,6 @@ body {
     font-weight: 700;
 }
 
-.approve-footer {
-    text-align: right;
-    margin-top: 25px;
-}
-
 .approve-textarea {
     width: 63%;
     height: 90px;
@@ -88,6 +83,11 @@ body {
     border: 1px solid #D9D9D9;
     box-sizing: border-box;
     border-radius: 4px;
+}
+
+.approve-footer {
+    text-align: right;
+    margin-top: 25px;
 }
 
 .approve__btn {
@@ -100,6 +100,18 @@ body {
     font-size: 22px;
     font-weight: 700;
 }
+
+.approved__btn {
+    display: inline-block;
+    padding: 14px 30px;
+    background: #696969;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    font-size: 22px;
+    font-weight: 700;
+}
+
 
 .approve-form__error-message {
     color: red;

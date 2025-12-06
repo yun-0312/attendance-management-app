@@ -3,7 +3,7 @@ body {
 }
 
 .attendance-list__container {
-    margin: 90px auto 0;
+    margin: 90px auto;
     width: 900px;
     padding: 0 20px;
 }

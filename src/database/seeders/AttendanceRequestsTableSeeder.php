@@ -25,7 +25,7 @@ class AttendanceRequestsTableSeeder extends Seeder
         foreach ($attendances as $attendance) {
 
             // 30% の確率で pending の遅刻 or 退勤修正を作成
-            if (rand(1, 100) <= 30) {
+            if (rand(1, 100) <= 10) {
                 $this->createPendingRequest($attendance);
             }
 

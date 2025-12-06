@@ -16,49 +16,47 @@ class BreakTimeRequestsTableSeeder extends Seeder
             ->where('status', 'pending')    
             ->get();
 
-        foreach ($attendanceRequests as $ar) {
+        foreach ($attendanceRequests as $attendanceRequest) {
 
-            // 遅刻だけの理由なら休憩申請は作らない
-            if ($ar->reason === "電車遅延のため") {
-                continue;
-            }
+            $attendance = $attendanceRequest->attendance;
+            $date = Carbon::parse($attendance->work_date);
 
+            $breaks = $attendance->breakTimes;
             // 30% の確率で休憩を修正
-            if (rand(1, 100) <= 30) {
-
-                foreach ($ar->attendance->breakTimes as $break) {
-
-                    $date = $ar->attendance->work_date;
-
+            $shouldShift = rand(1, 100) <= 30;
+            foreach ($breaks as $break) {
+                if ($shouldShift) {
                     $newStart = Carbon::parse($break->break_start)->addMinutes(30);
-                    $newEnd   = Carbon::parse($break->break_end)->addMinutes(30);
-
-                    BreakTimeRequest::create([
-                        'attendance_request_id' => $ar->id,
-                        'break_time_id'         => $break->id,
-                        'requested_break_start' => $newStart,
-                        'requested_break_end'   => $newEnd,
-                    ]);
+                    $newEnd = Carbon::parse($break->break_end)->addMinutes(30);
+                } else {
+                    $newStart = $break->break_start;
+                    $newEnd = $break->break_end;
                 }
+                BreakTimeRequest::create([
+                    'attendance_request_id' => $attendanceRequest->id,
+                    'break_time_id'         => $break->id,
+                    'requested_break_start' => $newStart,
+                    'requested_break_end'   => $newEnd,
+                ]);
+                
             }
-
             // 追加休憩（5%）
             if (rand(1, 100) <= 5) {
 
-                $clockIn  = Carbon::parse($ar->requested_clock_in);
-                $clockOut = Carbon::parse($ar->requested_clock_out);
+                $clockIn  = Carbon::parse($attendanceRequest->requested_clock_in);
+                $clockOut = Carbon::parse($attendanceRequest->requested_clock_out);
 
                 // ランダムな位置に60分休憩追加
-                $start = $clockIn->copy()->addMinutes(rand(60, 180));
-                $end   = $start->copy()->addMinutes(60);
+                $addStart = $clockIn->copy()->addMinutes(rand(60, 180));
+                $addEnd   = $addStart->copy()->addMinutes(60);
 
                 // 勤務時間外になる場合は作らない
-                if ($end->lt($clockOut)) {
+                if ($addEnd->lt($clockOut)) {
                     BreakTimeRequest::create([
-                        'attendance_request_id' => $ar->id,
+                        'attendance_request_id' => $attendanceRequest->id,
                         'break_time_id'         => null,
-                        'requested_break_start' => $start,
-                        'requested_break_end'   => $end,
+                        'requested_break_start' => $addStart,
+                        'requested_break_end'   => $addEnd,
                     ]);
                 }
             }

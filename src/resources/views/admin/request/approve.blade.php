@@ -52,11 +52,17 @@
             <td class="approve-table__data">{{ $attendanceRequest->reason }}</td>
         </tr>
     </table>
+    @if ($attendanceRequest->status === 'pending')
     <div class="approve-footer">
         <form action="{{ route('attendance.request.approve', $attendanceRequest->id) }}" method="post" class="approve__form">
         @csrf
         @method('PATCH')
         <button type="submit" class="approve__btn">承認</button>
     </div>
+    @else
+    <div class="approve-footer">
+        <button type="button" class="approved__btn">承認済み</button>
+    </div>
+    @endif
 </div>
 @endsection
