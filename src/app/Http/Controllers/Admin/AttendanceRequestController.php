@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attendance;
 use App\Models\AttendanceRequest;
 use App\Models\BreakTime;
-use App\Models\BreakTimeRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -59,7 +57,7 @@ class AttendanceRequestController extends Controller
             }
         });
         return redirect()
-            ->route('attendance.request.list')
+            ->route('admin.attendance_request.list')
             ->with('success', '修正申請を承認しました');
     }
 }

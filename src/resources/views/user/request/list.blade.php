@@ -41,7 +41,7 @@
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
                     <td class="request-table_body">
-                        <a href="{{ route('attendanceRequest.detail', $req->id) }}" class="request-table__link">詳細</a>
+                        <a href="{{ route('attendance_request.detail', $req->id) }}" class="request-table__link">詳細</a>
                     </td>
                 </tr>
                 @empty
@@ -76,7 +76,7 @@
                     <td class="request-table_body">{{ $req->attendance->work_date->format('Y/m/d') }}</td>
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
-                    <td class="request-table_body"><a href="{{ route('attendanceRequest.detail', $req->id) }}" class="request-table__link">詳細</a></td>
+                    <td class="request-table_body"><a href="{{ route('attendance_request.detail', $req->id) }}" class="request-table__link">詳細</a></td>
                 </tr>
                 @empty
                 <tr>

@@ -9,6 +9,11 @@
 @endsection
 
 @section('content')
+@if (session('success'))
+<p class="success-message">
+    {{ session('success') }}
+</p>
+@endif
 <div class="request-list__container">
     <h2 class="request-list__title">申請一覧</h2>
 
@@ -41,7 +46,7 @@
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
                     <td class="request-table_body">
-                        <a href="{{ route('attendance.request.show', $req->id) }}" class="request-table__link">詳細</a>
+                        <a href="{{ route('admin.attendance_request.show', $req->id) }}" class="request-table__link">詳細</a>
                     </td>
                 </tr>
                 @empty
@@ -76,7 +81,7 @@
                     <td class="request-table_body">{{ $req->attendance->work_date->format('Y/m/d') }}</td>
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
-                    <td class="request-table_body"><a href="{{ route('attendance.request.show', $req->id) }}" class="request-table__link">詳細</a></td>
+                    <td class="request-table_body"><a href="{{ route('admin.attendance_request.show', $req->id) }}" class="request-table__link">詳細</a></td>
                 </tr>
                 @empty
                 <tr>

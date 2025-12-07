@@ -28,11 +28,17 @@ class AttendanceController extends Controller
         if (!auth('admin')->check()) {
             abort(403);
         }
+        $pendingRequest = $attendance->latestPendingRequest();
+        if ($pendingRequest) {
+            return redirect()->route('admin.attendance_request.show', [
+                'attendanceRequest' => $pendingRequest->id
+            ]);
+        }
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
         return view('admin.attendance.detail', compact('attendance', 'breaks'));
     }
 
-        public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
+    public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
         DB::transaction(function () use ($request, $attendance) {
             // 勤怠の更新
             $attendance->update([

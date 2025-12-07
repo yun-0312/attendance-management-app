@@ -14,6 +14,12 @@ use App\Http\Controllers\Admin\AttendanceRequestController as AdminAttendanceReq
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
 
+// ログアウト
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect()->route('login');
+})->name('logout');
+
 //メール認証画面
 Route::get('/email/verify', function () {
     return view('user.auth.verify-email');
@@ -36,46 +42,54 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('message', '確認メールを再送しました。');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::prefix('attendance')->middleware(['auth', 'verified'])->group(function () {
     // 勤怠トップページ
-    Route::get('/attendance', [AttendanceController::class, 'index'])
+    Route::get('/', [AttendanceController::class, 'index'])
         ->name('attendance.index');
 
     // 出勤
-    Route::post('/attendance/start', [AttendanceController::class, 'start'])
+    Route::post('/start', [AttendanceController::class, 'start'])
         ->name('attendance.start');
 
     // 退勤
-    Route::post('/attendance/end', [AttendanceController::class, 'end'])
+    Route::post('/end', [AttendanceController::class, 'end'])
         ->name('attendance.end');
 
-    // 休憩入り
-    Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])
+    // 休憩開始
+    Route::post('/break-start', [AttendanceController::class, 'breakStart'])
         ->name('attendance.break.start');
 
-    // 休憩終わり
-    Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])
+    // 休憩終了
+    Route::post('/break-end', [AttendanceController::class, 'breakEnd'])
         ->name('attendance.break.end');
 
     // 勤怠一覧画面（一般ユーザー）
-    Route::get('/attendance/list', [AttendanceController::class, 'list'])
+    Route::get('/list', [AttendanceController::class, 'list'])
         ->name('attendance.list');
 
     // 勤怠詳細画面（一般ユーザー）
-    Route::get('/attendance/detail/{attendance}', [AttendanceController::class, 'detail'])
+    Route::get('/detail/{attendance}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail')
         ->middleware('auth');
 
     // 勤怠修正（一般ユーザー）
-    Route::patch('/attendance/detail/{attendance}', [AttendanceController::class, 'update'])
+    Route::patch('/detail/{attendance}', [AttendanceController::class, 'update'])
         ->name('attendance.update')
         ->middleware('auth');
+});
 
-    // 申請一覧（一般ユーザー）
-    Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'list'])->name('attendance_request.list');
+// 申請一覧画面(一般ユーザー・管理者)
+Route::get('/stamp_correction_request/list', function () {
+    if (auth('admin')->check()) {
+        return app(AdminAttendanceRequestController::class)->list();
+    } else {
+        return app(AttendanceRequestController::class)->list();
+    }
+})->middleware('multi_auth')->name('attendance_request.list');
 
-    // 申請詳細（一般ユーザー）
-    Route::get('/stamp_correction_request/detail/{attendanceRequest}', [AttendanceRequestController::class, 'detail'])->name('attendanceRequest.detail');
+Route::middleware(['auth', 'verified'])->group(function () {
+    // 申請詳細画面（一般ユーザー）
+    Route::get('/stamp_correction_request/detail/{attendanceRequest}', [AttendanceRequestController::class, 'detail'])->name('attendance_request.detail');
 });
 
 // 管理者ログインページ
@@ -84,10 +98,14 @@ Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name
 // 管理者ログイン処理
 Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin.login.store');
 
+// 管理者ログアウト
+Route::post('/admin/logout', function () {
+    auth('admin')->logout();
+    return redirect()->route('login');
+})->name('admin.logout');
+
 // 管理者専用
-Route::prefix('admin')
-    ->middleware(['is_admin'])
-    ->group(function () {
+Route::prefix('admin')->middleware(['is_admin'])->group(function () {
 
     // 勤怠一覧（管理者）
     Route::get('/attendance/list', [AdminAttendanceController::class, 'list'])
@@ -117,16 +135,15 @@ Route::prefix('admin')
         [AdminAttendanceController::class, 'downloadCsv']
     )
         ->name('admin.staff.attendance.csv');
+});
 
-    // 申請一覧画面（管理者）
-    Route::get('/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'list'])
-        ->name('attendance.request.list');
-
+Route::middleware(['is_admin'])->group(function () {
     // 申請詳細承認用（管理者）
     Route::get('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'show'])
-        ->name('attendance.request.show');
+        ->name('admin.attendance_request.show');
 
     // 申請承認処理（管理者）
     Route::patch('/stamp_correction_request/approve/{attendanceRequest}', [AdminAttendanceRequestController::class, 'approve'])
-        ->name('attendance.request.approve');
+        ->name('admin.attendance_request.approve');
 });
+

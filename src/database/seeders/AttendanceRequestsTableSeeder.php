@@ -23,15 +23,16 @@ class AttendanceRequestsTableSeeder extends Seeder
         $attendances = Attendance::with('breakTimes')->get();
 
         foreach ($attendances as $attendance) {
-
-            // 5% の確率で pending の遅刻 or 退勤修正を作成
-            if (rand(1, 100) <= 5) {
-                $this->createPendingRequest($attendance);
-            }
-
             // 10% の確率で approved のリクエストを作成
             if (rand(1, 100) <= 10) {
                 $this->createApprovedRequest($attendance, $admin->id);
+            }
+        }
+
+        foreach ($attendances as $attendance) {
+            // 5% の確率で pending の遅刻 or 退勤修正を作成
+            if (rand(1, 100) <= 5) {
+                $this->createPendingRequest($attendance);
             }
         }
     }
@@ -53,39 +54,39 @@ class AttendanceRequestsTableSeeder extends Seeder
         }
 
         AttendanceRequest::create([
-            'attendance_id'      => $attendance->id,
-            'user_id'            => $attendance->user_id,
+            'attendance_id' => $attendance->id,
+            'user_id' => $attendance->user_id,
             'requested_clock_in' => $clockIn,
             'requested_clock_out' => $clockOut,
-            'reason'             => $reason,
-            'status'             => 'pending',
-            'created_at'         => now(),
-            'updated_at'         => now(),
+            'reason' => $reason,
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 
     private function createApprovedRequest($attendance, $adminId)
     {
         $request = AttendanceRequest::create([
-            'attendance_id'      => $attendance->id,
-            'user_id'            => $attendance->user_id,
+            'attendance_id' => $attendance->id,
+            'user_id' => $attendance->user_id,
             'requested_clock_in' => $attendance->clock_in,
             'requested_clock_out' => $attendance->clock_out,
-            'reason'             => '打刻誤りのため',
-            'status'             => 'approved',
-            'approved_by'        => $adminId,
-            'created_at'         => now(),
-            'updated_at'         => now(),
+            'reason' => '打刻誤りのため',
+            'status' => 'approved',
+            'approved_by' => $adminId,
+            'created_at' => now()->subSecond(),
+            'updated_at' => now()->subSecond(),
         ]);
 
         foreach ($attendance->breakTimes as $break) {
             BreakTimeRequest::create([
                 'attendance_request_id' => $request->id,
-                'break_time_id'         => $break->id,
+                'break_time_id' => $break->id,
                 'requested_break_start' => $break->break_start,
-                'requested_break_end'   => $break->break_end,
-                'created_at'            => now(),
-                'updated_at'            => now(),
+                'requested_break_end' => $break->break_end,
+                'created_at' => now()->subSecond(),
+                'updated_at' => now()->subSecond(),
             ]);
         }
     }

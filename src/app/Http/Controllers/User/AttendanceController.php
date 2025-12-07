@@ -91,7 +91,7 @@ class AttendanceController extends Controller
         }
         $pendingRequest = $attendance->latestPendingRequest();
         if ($pendingRequest) {
-            return redirect()->route('attendanceRequest.detail', [
+            return redirect()->route('attendance_request.detail', [
                 'attendanceRequest' => $pendingRequest->id
             ]);
         }
