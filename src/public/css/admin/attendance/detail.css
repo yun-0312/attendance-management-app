@@ -115,6 +115,43 @@ body {
     color: blue;
 }
 
+.readonly-input {
+    background: transparent;
+    border: none;
+    color: #000000;
+    padding: 0;
+    font-weight: 700;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.readonly-input[name="clock_out"],
+.readonly-input[name$="[end]"] {
+    margin-left: 30px;
+}
+
+.readonly-input[name="clock_in"],
+.readonly-input[name$="[start]"] {
+    width: 40px;
+    margin-right: 30px;
+}
+
+.readonly-textarea {
+    background: none;
+    border: none;
+    resize: none;
+    padding: 0;
+    font-weight: 700;
+    color: #000;
+    pointer-events: none;
+}
+
+.pending-message {
+    color: rgba(255, 0, 0, 0.5);
+    font-size: 18px;
+    font-weight: 800;
+}
+
 /* ================================
 ▼ Tablet (768px〜850px)
 ================================ */
@@ -192,7 +229,7 @@ body {
     }
 
     .detail-table__data-item:first-child {
-        margin-right: 40px;
+        margin-right: 95px;
     }
 
     .time-row {

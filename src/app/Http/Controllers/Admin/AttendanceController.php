@@ -28,14 +28,12 @@ class AttendanceController extends Controller
         if (!auth('admin')->check()) {
             abort(403);
         }
-        $pendingRequest = $attendance->latestPendingRequest();
-        if ($pendingRequest) {
-            return redirect()->route('admin.attendance_request.show', [
-                'attendanceRequest' => $pendingRequest->id
-            ]);
-        }
+        $pendingRequest = $attendance->attendanceRequests()
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('admin.attendance.detail', compact('attendance', 'breaks'));
+        return view('admin.attendance.detail', compact('attendance', 'breaks', 'pendingRequest'));
     }
 
     public function update (UpdateAttendanceRequest $request, Attendance $attendance) {
