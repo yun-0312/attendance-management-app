@@ -30,10 +30,13 @@ class AttendanceController extends Controller
         }
         $pendingRequest = $attendance->attendanceRequests()
             ->where('status', 'pending')
+            ->with('breakTimeRequests')
             ->latest()
             ->first();
+        $displayAttendance = $pendingRequest ? $attendance : $attendance;
+        $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
         $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('admin.attendance.detail', compact('attendance', 'breaks', 'pendingRequest'));
+        return view('admin.attendance.detail', compact('attendance', 'pendingRequest', 'displayAttendance', 'displayBreaks'));
     }
 
     public function update (UpdateAttendanceRequest $request, Attendance $attendance) {

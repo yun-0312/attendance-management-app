@@ -35,9 +35,9 @@
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($displayAttendance->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
-                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $attendance->clock_out ? $attendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $displayAttendance->clock_out ? $displayAttendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
@@ -51,14 +51,18 @@
                     @enderror
                 </td>
             </tr>
-            @foreach($breaks as $i => $break)
+            @foreach($displayBreaks as $i => $break)
             <tr class="detail-table__column">
                 <th class="detail-table__header">休憩{{ $i + 1 }}</th>
                 <td class="detail-table__data">
                     <div class="time-row">
                         <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
+                        @php
+                        $start = $break->break_start ?? $break->requested_break_start;
+                        $end = $break->break_end ?? $break->requested_break_end;
+                        @endphp
                         <input type="text" name="breaks[{{ $i }}][start]" class="time__input @if($pendingRequest) readonly-input @endif"
-                            value="{{ old("breaks.$i.start", $break->break_start->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                            value="{{ old("breaks.$i.start", optional($start)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
                         <input type="text" name="breaks[{{ $i }}][end]" class="time__input @if($pendingRequest) readonly-input @endif"
                             value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
@@ -118,9 +122,9 @@
         </table>
         <div class="detail-footer">
             @if($pendingRequest)
-                <p class="pending-message">*承認待ちのため修正はできません。</p>
+            <p class="pending-message">*承認待ちのため修正はできません。</p>
             @else
-                <button type="submit" class="detail-edit-btn">修正</button>
+            <button type="submit" class="detail-edit-btn">修正</button>
             @endif
         </div>
     </form>
