@@ -65,7 +65,7 @@
                             value="{{ old("breaks.$i.start", optional($start)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
                         <input type="text" name="breaks[{{ $i }}][end]" class="time__input @if($pendingRequest) readonly-input @endif"
-                            value="{{ old("breaks.$i.end", optional($break->break_end)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                            value="{{ old("breaks.$i.end", optional($end)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                     </div>
                     @error("breaks.$i.start")
                     <p class="detail-form__error-message">
@@ -82,7 +82,7 @@
             @endforeach
 
             @php
-            $newIndex = count($breaks);
+            $newIndex = count($displayBreaks);
             @endphp
             @if(!$pendingRequest)
             <tr class="detail-table__column">
@@ -109,8 +109,8 @@
             <tr class="detail-table__column">
                 <th class="detail-table__header">備考</th>
                 <td class="detail-table__data">
-                    <div class="textarea-wrapper">
-                        <textarea name="reason" rows="4" class="detail-textarea @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>{{ old('reason') }}</textarea>
+                    <div class="textarea-wrapper @if($pendingRequest) readonly-mode @endif">
+                        <textarea name="reason" rows="4" class="detail-textarea @if($pendingRequest) readonly-textarea @endif" @if($pendingRequest) disabled @endif>{{ $pendingRequest ? $pendingRequest->reason : old('reason') }}</textarea>
                         @error('reason')
                         <p class="detail-form__error-message">
                             {{ $message }}
