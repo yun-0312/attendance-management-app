@@ -140,6 +140,7 @@ body {
     display: flex;
     align-items: center;
     height: 100%;
+    padding-top: 30px;
 }
 
 .readonly-textarea {
