@@ -20,7 +20,7 @@ class AdminLoginController extends Controller
         $credentials['role'] = 'admin';
         if (!Auth::guard('admin')->attempt($credentials)) {
             throw ValidationException::withMessages([
-                'email' => ' ログイン情報が登録されていません。',
+                'email' => 'ログイン情報が登録されていません',
             ]);
         }
         $request->session()->regenerate();
