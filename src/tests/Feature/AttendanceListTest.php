@@ -23,14 +23,14 @@ class AttendanceListTest extends TestCase
             ->count(3)
             ->for($user)
             ->sequence(
-                ['work_date' => '2025-02-01'],
-                ['work_date' => '2025-02-02'],
-                ['work_date' => '2025-02-03'],
+                ['work_date' => '2025-12-01'],
+                ['work_date' => '2025-12-02'],
+                ['work_date' => '2025-12-03'],
             )
             ->create();
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/list');
+        $response = $this->get('/attendance/list?date' . '2025-02-01');
         foreach ($attendances as $attendance) {
             $response->assertSee($attendance->work_date->locale('ja')->isoFormat('MM/DD(ddd)'));
         }
