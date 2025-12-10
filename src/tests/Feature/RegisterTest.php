@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
@@ -107,7 +105,6 @@ class RegisterTest extends TestCase
             'email' => 'test@example.com',
         ]);
 
-        // 登録後のリダイレクト（Fortify は verify.notice に飛ばす）
         $response->assertRedirect('/email/verify');
     }
 }

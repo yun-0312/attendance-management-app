@@ -7,13 +7,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Attendance;
 use App\Models\BreakTime;
-use App\Models\AttendanceRequest;
-use App\models\BreakTimeRequest;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AttendanceDetailUpdateTest extends TestCase
 {
+    use RefreshDatabase;
+
     // テスト用データ作成
     private function createUserWithAttendance()
     {
@@ -126,5 +124,4 @@ class AttendanceDetailUpdateTest extends TestCase
             'reason' => '備考を記入してください'
         ]);
     }
-
 }

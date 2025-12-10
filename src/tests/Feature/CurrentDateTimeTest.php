@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CurrentDateTimeTest extends TestCase

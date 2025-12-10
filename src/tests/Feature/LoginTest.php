@@ -15,7 +15,6 @@ class LoginTest extends TestCase
     //userのメールアドレス入力のバリデーションチェック
     public function email_is_required()
     {
-        $this->withSession([]);
         $response = $this->post('/login', [
             'email' => '',
             'password' => 'password123',

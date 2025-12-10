@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Tests\TestCase;
 
 class AdminLoginTest extends TestCase
