@@ -29,16 +29,16 @@ class AttendanceDetailTest extends TestCase
         // 勤怠データ作成
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
-            'work_date' => Carbon::parse('2024-01-15'),
-            'clock_in' => Carbon::parse('2024-01-15 09:00'),
-            'clock_out' => Carbon::parse('2024-01-15 18:00'),
+            'work_date' => Carbon::parse('2025-01-15'),
+            'clock_in' => Carbon::parse('2025-01-15 09:00'),
+            'clock_out' => Carbon::parse('2025-01-15 18:00'),
         ]);
 
         // 休憩時間データ
         BreakTime::factory()->create([
             'attendance_id' => $attendance->id,
-            'break_start' => Carbon::parse('2024-01-15 12:00'),
-            'break_end' => Carbon::parse('2024-01-15 13:00'),
+            'break_start' => Carbon::parse('2025-01-15 12:00'),
+            'break_end' => Carbon::parse('2025-01-15 13:00'),
         ]);
 
         return [$user, $attendance];
@@ -70,7 +70,7 @@ class AttendanceDetailTest extends TestCase
         $response = $this->get("/attendance/detail/{$attendance->id}");
 
         $response->assertStatus(200);
-        $response->assertSee('2024年');
+        $response->assertSee('2025年');
         $response->assertSee('1月15日');
     }
 

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Attendance;
 use App\Models\User;
+use App\Models\BreakTime;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,19 +21,46 @@ class AttendanceListTest extends TestCase
 
         // 3日分の勤怠データを作成
         $attendances = Attendance::factory()
-            ->count(3)
+            ->count(5)
             ->for($user)
             ->sequence(
-                ['work_date' => '2025-12-01'],
-                ['work_date' => '2025-12-02'],
-                ['work_date' => '2025-12-03'],
+            ['work_date' => '2025-12-01', 'clock_in' => '09:00', 'clock_out' => '18:00'],
+            ['work_date' => '2025-12-02', 'clock_in' => '09:30', 'clock_out' => '18:30'],
+            ['work_date' => '2025-12-03', 'clock_in' => '10:00', 'clock_out' => '19:00'],
             )
             ->create();
 
-        $this->actingAs($user);
-        $response = $this->get('/attendance/list?date' . '2025-02-01');
+        // 各出勤に対して休憩時間を付与
         foreach ($attendances as $attendance) {
-            $response->assertSee($attendance->work_date->locale('ja')->isoFormat('MM/DD(ddd)'));
+            BreakTime::factory()->create([
+                'attendance_id' => $attendance->id,
+                'break_start'   => '12:00',
+                'break_end'     => '13:00',
+            ]);
+        }
+
+        $this->actingAs($user);
+        $response = $this->get('/attendance/list?year=2025&month=12');
+        foreach ($attendances as $attendance) {
+            // 1. 日付が表示されていること
+            $response->assertSee(
+                $attendance->work_date
+                    ->locale('ja')
+                    ->isoFormat('MM/DD(ddd)')
+            );
+
+            // 2. 出勤時刻が表示されていること
+            $response->assertSee(
+                $attendance->clock_in->format('H:i')
+            );
+
+            // 3. 退勤時刻が表示されていること
+            $response->assertSee(
+                optional($attendance->clock_out)->format('H:i')
+            );
+
+            // 4. 休憩合計時間（0:30）が表示されていること
+            $response->assertSee('1:00');
         }
     }
 
@@ -103,7 +131,7 @@ class AttendanceListTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->get('/attendance/list');
+        $response = $this->get('/attendance/list?year=2025&month=12');
 
         // 詳細ボタンのリンクが存在するかチェック
         $response->assertSee('/attendance/detail/' . $attendance->id);

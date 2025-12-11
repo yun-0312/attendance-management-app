@@ -114,8 +114,9 @@ class BreakTest extends TestCase
         // 勤怠一覧画面アクセス（当月）
         $response = $this->get('/attendance/list?year=' . now()->year . '&month=' . now()->month);
 
-        // 休憩時刻が表示されていること
-        $response->assertSee($attendance->breakTimes[0]->break_start->format('H:i'));
-        $response->assertSee($attendance->breakTimes[0]->break_end->format('H:i'));
+        $totalBreakTime = $attendance->total_break_time;
+
+        // 合計休憩時間が表示されていることを確認
+        $response->assertSee($totalBreakTime);
     }
 }

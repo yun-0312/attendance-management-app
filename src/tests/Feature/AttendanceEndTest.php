@@ -51,22 +51,21 @@ class AttendanceEndTest extends TestCase
     public function end_time_is_displayed_correctly_in_list_screen()
     {
         $user = User::factory()->create();
+        $this->actingAs($user);
 
-        // 出勤 → 退勤のデータ
-        $clockIn  = Carbon::today()->setTime(9, 0);
-        $clockOut = Carbon::today()->setTime(18, 0);
+        // 出勤 → 退勤
+        $this->post('/attendance/start');
+        $this->post('/attendance/end');
 
-        Attendance::factory()->create([
-            'user_id'   => $user->id,
-            'work_date' => today(),
-            'clock_in'  => $clockIn,
-            'clock_out' => $clockOut,
-        ]);
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('work_date', today())
+            ->first();
+        
+        $formatTime = $attendance->clock_out->format('H:i');
 
-        $response = $this->actingAs($user)
-            ->get('/attendance/list');
+        $response = $this->get('/attendance/list?year=' . now()->year . '&month=' . now()->month);
 
-        $formatTime = $clockOut->format('H:i');
+       // 退勤時刻が表示されていることを確認
         $response->assertSee($formatTime);
     }
 }
