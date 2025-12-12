@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/auth/register.css') }}" />
 @endsection
 
-@section('header')
-@include('layouts.user-header')
-@endsection
-
 @section('content')
 <div class="content-wrapper">
     <h2 class="register-form__heading">会員登録</h2>

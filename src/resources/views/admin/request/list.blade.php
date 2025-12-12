@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/admin/request/list.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/admin-header')
-@endsection
-
 @section('content')
 @if (session('success'))
 <p class="success-message">

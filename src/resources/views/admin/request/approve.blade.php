@@ -4,12 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/admin/request/approve.css') }}">
 @endsection
 
-
-@section('header')
-@include('layouts/admin-header')
-@endsection
-
-
 @section('content')
 <div class="approve-container">
     <h2 class="approve-title">勤怠詳細</h2>
@@ -55,9 +49,9 @@
     @if ($attendanceRequest->status === 'pending')
     <div class="approve-footer">
         <form action="{{ route('admin.attendance_request.approve', $attendanceRequest->id) }}" method="post" class="approve__form">
-        @csrf
-        @method('PATCH')
-        <button type="submit" class="approve__btn">承認</button>
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="approve__btn">承認</button>
     </div>
     @else
     <div class="approve-footer">

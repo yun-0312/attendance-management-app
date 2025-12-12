@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/admin/attendance/list.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/admin-header')
-@endsection
-
 @section('content')
 <div class="list-container">
     <h2 class="list-title">{{ $date->format('Y年n月j日') }}の勤怠</h2>

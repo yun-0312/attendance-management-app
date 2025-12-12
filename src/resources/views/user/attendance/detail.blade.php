@@ -4,21 +4,11 @@
 <link rel="stylesheet" href="{{ asset('css/user/attendance/detail.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/user-header')
-@endsection
-
 @section('content')
-@if (session('success'))
-<p class="success-message">
-    {{ session('success') }}
-</p>
-@endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
     <form class="detail__form" action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="post">
         @csrf
-        @method('PATCH')
         <table class="detail-table">
             <tr class="detail-table__column">
                 <th class="detail-table__header">名前</th>

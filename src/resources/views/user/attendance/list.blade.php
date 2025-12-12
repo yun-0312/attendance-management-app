@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/attendance/list.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/user-header')
-@endsection
-
 @section('content')
 <div class="attendance-list__container">
     <h2 class="attendance-list__title">勤怠一覧</h2>

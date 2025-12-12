@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/auth/login.css') }}" />
 @endsection
 
-@section('header')
-@include('layouts.user-header')
-@endsection
-
 @section('content')
 <div class="content-wrapper">
     <h2 class="login-form__heading">ログイン</h2>

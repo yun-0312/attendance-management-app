@@ -64,7 +64,7 @@ class UpdateAttendanceRequest extends FormRequest
             'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
             'breaks.*.start.regex' => '休憩時間を0:00の形式で入力してください',
             'breaks.*.start.after' => '休憩時間が不適切な値です',
-            'breaks.*.start.before_or_equal' => '休憩時間もしくは退勤時間が不適切な値です',
+            'breaks.*.start.before_or_equal' => '休憩時間が不適切な値です',
             'breaks.*.end.regex' => '休憩時間を正しい形式（00:00〜23:59）で入力してください',
             'breaks.*.end.after' => '休憩時間が不適切な値です',
             'breaks.*.end.before' => '休憩時間もしくは退勤時間が不適切な値です',

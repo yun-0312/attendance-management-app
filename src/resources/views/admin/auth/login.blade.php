@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/admin/auth/login.css') }}" />
 @endsection
 
-@section('header')
-@include('layouts.admin-header')
-@endsection
-
 @section('content')
 <div class="content-wrapper">
     <h2 class="login-form__heading">管理者ログイン</h2>

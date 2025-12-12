@@ -9,9 +9,19 @@ class MultiAuth
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::guard('web')->check() || Auth::guard('admin')->check()) {
+        // 管理者ログイン中なら admin ガードのみ有効
+        if (Auth::guard('admin')->check()) {
+            Auth::shouldUse('admin');
             return $next($request);
         }
+
+        // 一般ユーザーなら web ガードのみ有効
+        if (Auth::guard('web')->check()) {
+            Auth::shouldUse('web');
+            return $next($request);
+        }
+
+        // どちらでもなければログイン画面へ
         return redirect()->route('login');
     }
 }

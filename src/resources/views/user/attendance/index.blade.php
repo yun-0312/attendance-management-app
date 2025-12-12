@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/attendance/index.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/user-header')
-@endsection
-
 @section('content')
 @if (session('success'))
 <p class="success-message">

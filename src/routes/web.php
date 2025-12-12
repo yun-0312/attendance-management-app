@@ -73,7 +73,7 @@ Route::prefix('attendance')->middleware(['auth', 'verified'])->group(function ()
         ->middleware('auth');
 
     // 勤怠修正（一般ユーザー）
-    Route::patch('/detail/{attendance}', [AttendanceController::class, 'update'])
+    Route::post('/detail/{attendance}', [AttendanceController::class, 'update'])
         ->name('attendance.update')
         ->middleware('auth');
 });
@@ -101,6 +101,8 @@ Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin
 // 管理者ログアウト
 Route::post('/admin/logout', function () {
     auth('admin')->logout();
+    session()->invalidate();
+    session()->regenerateToken();
     return redirect()->route('login');
 })->name('admin.logout');
 

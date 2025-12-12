@@ -46,7 +46,7 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->patch(route('attendance.update', $attendance->id), [
+        $response = $this->post(route('attendance.update', $attendance->id), [
             'clock_in' => '20:00',
             'clock_out' => '10:00',
             'reason' => 'test reason',
@@ -68,7 +68,7 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->patch(route('attendance.update', $attendance->id), [
+        $response = $this->post(route('attendance.update', $attendance->id), [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => 'test reason',
@@ -78,7 +78,7 @@ class AttendanceDetailUpdateTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'breaks.0.start' => '休憩時間もしくは退勤時間が不適切な値です'
+            'breaks.0.start' => '休憩時間が不適切な値です'
         ]);
     }
 
@@ -90,7 +90,7 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->patch(route('attendance.update', $attendance->id), [
+        $response = $this->post(route('attendance.update', $attendance->id), [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => 'test reason',
@@ -112,7 +112,7 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->patch(route('attendance.update', $attendance->id), [
+        $response = $this->post(route('attendance.update', $attendance->id), [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => '',
@@ -134,7 +134,7 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $this->patch(route('attendance.update', $attendance->id), [
+        $this->post(route('attendance.update', $attendance->id), [
             'clock_in' => '08:30',
             'clock_out' => '18:00',
             'reason' => '早く出勤しました',
@@ -154,36 +154,77 @@ class AttendanceDetailUpdateTest extends TestCase
     // 	「承認待ち」にログインユーザーが行った申請が全て表示されていること
     public function test_pending_requests_are_listed_for_user()
     {
-        [$user, $attendance] = $this->createUserWithAttendance();
+        [$user, $attendance1] = $this->createUserWithAttendance(['work_date' => '2025-12-01']);
+        [, $attendance2]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-02']);
+        [, $attendance3]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-03']);
 
-        $request = AttendanceRequest::factory()->create([
-            'attendance_id' => $attendance->id,
-            'user_id' => $user->id,
-            'status' => 'pending'
-        ]);
+        // 3件の「承認待ち」申請
+        $requests = AttendanceRequest::factory()->count(3)->sequence(
+            [
+                'attendance_id' => $attendance1->id,
+                'user_id'       => $user->id,
+                'status'        => 'pending',
+                'reason'        => '遅刻理由A',
+            ],
+            [
+                'attendance_id' => $attendance2->id,
+                'user_id'       => $user->id,
+                'status'        => 'pending',
+                'reason'        => '遅刻理由B',
+            ],
+            [
+                'attendance_id' => $attendance3->id,
+                'user_id'       => $user->id,
+                'status'        => 'pending',
+                'reason'        => '遅刻理由C',
+            ],
+        )->create();
 
         $this->actingAs($user);
 
-        $response = $this->get(route('attendance_request.list'));
-        $response->assertSee($request->reason);
+        $response = $this->get(route('attendance_request.list', ['tab' => 'pending']));
+        foreach ($requests as $request) {
+            $response->assertSee($request->reason);
+        }
     }
 
     /** @test */
     //　「承認済み」に管理者が承認した修正申請が全て表示されている
     public function test_approved_requests_are_listed_for_user()
     {
-        [$user, $attendance] = $this->createUserWithAttendance();
+        [$user, $attendance1] = $this->createUserWithAttendance(['work_date' => '2025-12-01']);
+        [, $attendance2]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-02']);
+        [, $attendance3]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-03']);
 
-        $request = AttendanceRequest::factory()->create([
-            'attendance_id' => $attendance->id,
-            'user_id' => $user->id,
-            'status' => 'approved'
-        ]);
+        // 3件の approved 申請を作成
+        $requests = AttendanceRequest::factory()->count(3)->sequence(
+            [
+                'attendance_id' => $attendance1->id,
+                'user_id'       => $user->id,
+                'status'        => 'approved',
+                'reason'        => '承認理由A',
+            ],
+            [
+                'attendance_id' => $attendance2->id,
+                'user_id'       => $user->id,
+                'status'        => 'approved',
+                'reason'        => '承認理由B',
+            ],
+            [
+                'attendance_id' => $attendance3->id,
+                'user_id'       => $user->id,
+                'status'        => 'approved',
+                'reason'        => '承認理由C',
+            ],
+        )->create();
 
         $this->actingAs($user);
 
-        $response = $this->get(route('attendance_request.list'));
-        $response->assertSee($request->reason);
+        $response = $this->get(route('attendance_request.list', ['tab' => 'approved']));
+
+        foreach ($requests as $req) {
+            $response->assertSee($req->reason);
+        }
     }
 
     /** @test */

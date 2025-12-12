@@ -16,7 +16,7 @@
             <a href="{{ route('attendance_request.list') }}" class="header-nav__link">申請一覧</a>
         </li>
         <li class="header-nav__item">
-            <form action="{{ route('logout') }}" class="header-nav__logout" method="post">
+            <form action="{{ route('admin.logout') }}" class="header-nav__logout" method="post">
                 @csrf
                 <button class="header-nav__link">ログアウト</button>
             </form>

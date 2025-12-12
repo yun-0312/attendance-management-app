@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/auth/verify-email.css') }}" />
 @endsection
 
-@section('header')
-@include('layouts.user-header')
-@endsection
-
 @section('content')
 <div class="container">
     <p class="verify__message">

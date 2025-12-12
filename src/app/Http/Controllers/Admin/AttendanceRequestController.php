@@ -57,7 +57,7 @@ class AttendanceRequestController extends Controller
             }
         });
         return redirect()
-            ->route('admin.attendance_request.list')
+            ->route('attendance_request.list')
             ->with('success', '修正申請を承認しました');
     }
 }

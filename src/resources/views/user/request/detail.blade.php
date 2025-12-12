@@ -4,13 +4,12 @@
 <link rel="stylesheet" href="{{ asset('css/user/request/detail.css') }}">
 @endsection
 
-
-@section('header')
-@include('layouts/user-header')
-@endsection
-
-
 @section('content')
+@if (session('success'))
+<p class="success-message">
+    {{ session('success') }}
+</p>
+@endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
     <table class="detail-table">

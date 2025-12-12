@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user/request/list.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/user-header')
-@endsection
-
 @section('content')
 <div class="request-list__container">
     <h2 class="request-list__title">申請一覧</h2>

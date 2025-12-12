@@ -4,10 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/admin/staff/index.css') }}">
 @endsection
 
-@section('header')
-@include('layouts/admin-header')
-@endsection
-
 @section('content')
 <div class="list-container">
     <h2 class="list-title">スタッフ一覧</h2>
