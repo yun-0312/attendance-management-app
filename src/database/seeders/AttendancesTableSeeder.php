@@ -21,7 +21,7 @@ class AttendancesTableSeeder extends Seeder
 
         foreach ($users as $user) {
 
-            for ($i = 0; $i < $days; $i++) {
+            for ($i = 1; $i < $days; $i++) {
 
                 // i 日前の日付
                 $date = Carbon::today()->subDays($i);
@@ -45,16 +45,11 @@ class AttendancesTableSeeder extends Seeder
                     $clockOut = $clockIn->copy()->addHours(1);
                 }
 
-                // ステータスはランダム
-                $statusList = ['normal', 'pending', 'approved'];
-                $status = $statusList[array_rand($statusList)];
-
                 DB::table('attendances')->insert([
                     'user_id'   => $user->id,
                     'work_date' => $date->toDateString(),
                     'clock_in'  => $clockIn,
                     'clock_out' => $clockOut,
-                    'status'    => $status,
                     'created_at'=> now(),
                     'updated_at'=> now(),
                 ]);

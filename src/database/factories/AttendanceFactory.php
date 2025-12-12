@@ -21,7 +21,6 @@ class AttendanceFactory extends Factory
             'work_date' => $clockIn->toDateString(),
             'clock_in' => $clockIn,
             'clock_out' => $clockOut,
-            'status' => 'normal',
         ];
     }
 }

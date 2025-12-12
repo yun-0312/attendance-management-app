@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\AttendanceRequestController as AdminAttendanceRequestController;
+use App\Http\Controllers\Unified\AttendanceRequestController as UnifiedAttendanceRequestController;
 
 // ログイン
 Route::post('/login', [LoginController::class, 'store'])->name('login');
@@ -78,14 +79,12 @@ Route::prefix('attendance')->middleware(['auth', 'verified'])->group(function ()
         ->middleware('auth');
 });
 
-// 申請一覧画面(一般ユーザー・管理者)
-Route::get('/stamp_correction_request/list', function () {
-    if (auth('admin')->check()) {
-        return app(AdminAttendanceRequestController::class)->list();
-    } else {
-        return app(AttendanceRequestController::class)->list();
-    }
-})->middleware('multi_auth')->name('attendance_request.list');
+// 申請一覧（共通 URL）
+Route::get(
+    '/stamp_correction_request/list',
+    [UnifiedAttendanceRequestController::class, 'index']
+)->middleware('multi_auth')->name('attendance_request.list');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // 申請詳細画面（一般ユーザー）

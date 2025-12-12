@@ -19,7 +19,6 @@ class CreateAttendancesTable extends Migration
             $table->date('work_date');
             $table->dateTime('clock_in');
             $table->dateTime('clock_out')->nullable();
-            $table->enum('status', ['normal', 'pending', 'approved']);
             $table->timestamps();
         });
     }

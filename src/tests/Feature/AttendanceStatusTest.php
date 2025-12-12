@@ -38,7 +38,6 @@ class AttendanceStatusTest extends TestCase
             'user_id' => $user->id,
             'work_date' => today(),
             'clock_in' => now(),
-            'status' => 'normal',
         ]);
 
         $response = $this->get('/attendance');
@@ -58,7 +57,6 @@ class AttendanceStatusTest extends TestCase
             'user_id' => $user->id,
             'work_date' => today(),
             'clock_in' => now()->subHours(2),
-            'status' => 'normal',
         ]);
 
         BreakTime::create([
@@ -85,7 +83,6 @@ class AttendanceStatusTest extends TestCase
             'work_date' => today(),
             'clock_in' => now()->subHours(8),
             'clock_out' => now(),
-            'status' => 'normal',
         ]);
 
         $response = $this->get('/attendance');
