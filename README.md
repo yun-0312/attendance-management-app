@@ -157,7 +157,7 @@ php artisan test
 ```
 
 ## ER図
-<img width="701" height="651" alt="Image" src="https://github.com/user-attachments/assets/8bec838f-862a-4033-ac02-23cd5cc28fd5" />
+<img width="701" height="681" alt="Image" src="https://github.com/user-attachments/assets/5d243c33-6bfc-4470-8717-f2558daf249e" />
 
 ## URL
 ・開発環境：http://localhost/<br />
