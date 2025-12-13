@@ -56,6 +56,7 @@ class AttendanceRequestsTableSeeder extends Seeder
         AttendanceRequest::create([
             'attendance_id' => $attendance->id,
             'user_id' => $attendance->user_id,
+            'work_date' => $attendance->work_date,
             'requested_clock_in' => $clockIn,
             'requested_clock_out' => $clockOut,
             'reason' => $reason,
@@ -70,6 +71,7 @@ class AttendanceRequestsTableSeeder extends Seeder
         $request = AttendanceRequest::create([
             'attendance_id' => $attendance->id,
             'user_id' => $attendance->user_id,
+            'work_date' => $attendance->work_date,
             'requested_clock_in' => $attendance->clock_in,
             'requested_clock_out' => $attendance->clock_out,
             'reason' => '打刻誤りのため',

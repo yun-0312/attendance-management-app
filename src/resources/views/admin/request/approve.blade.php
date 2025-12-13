@@ -15,8 +15,8 @@
         <tr class="approve-table__column">
             <th class="approve-table__header">日付</th>
             <td class="approve-table__data">
-                <span class="approve-table__data-item">{{ $attendance->work_date->format('Y年') }}</span>
-                <span class="approve-table__data-item">{{ $attendance->work_date->format('n月j日') }}</span>
+                <span class="approve-table__data-item">{{ $attendanceRequest->work_date->format('Y年') }}</span>
+                <span class="approve-table__data-item">{{ $attendanceRequest->work_date->format('n月j日') }}</span>
             </td>
         </tr>
         <tr class="approve-table__column">

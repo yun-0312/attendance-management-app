@@ -13,6 +13,7 @@ class AttendanceRequest extends Model
     protected $fillable = [
         'attendance_id',
         'user_id',
+        'work_date',
         'requested_clock_in',
         'requested_clock_out',
         'reason',
@@ -21,6 +22,7 @@ class AttendanceRequest extends Model
     ];
 
     protected $casts = [
+        'work_date' => 'date',
         'requested_clock_in'  => 'datetime',
         'requested_clock_out' => 'datetime',
     ];

@@ -46,7 +46,11 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post(route('attendance.update', $attendance->id), [
+        $response = $this->post(
+            route('attendance.request.store', [
+                'date' => $attendance->work_date->toDateString(),
+            ]),
+            [
             'clock_in' => '20:00',
             'clock_out' => '10:00',
             'reason' => 'test reason',
@@ -68,7 +72,11 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post(route('attendance.update', $attendance->id), [
+        $response = $this->post(
+            route('attendance.request.store', [
+                'date' => $attendance->work_date->toDateString(),
+            ]),
+            [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => 'test reason',
@@ -90,7 +98,11 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post(route('attendance.update', $attendance->id), [
+        $response = $this->post(
+            route('attendance.request.store', [
+                'date' => $attendance->work_date->toDateString(),
+            ]),
+            [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => 'test reason',
@@ -112,7 +124,11 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post(route('attendance.update', $attendance->id), [
+        $response = $this->post(
+            route('attendance.request.store', [
+                'date' => $attendance->work_date->toDateString(),
+            ]),
+            [
             'clock_in' => '09:00',
             'clock_out' => '18:00',
             'reason' => '',
@@ -134,7 +150,11 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $this->post(route('attendance.update', $attendance->id), [
+        $response = $this->post(
+            route('attendance.request.store', [
+                'date' => $attendance->work_date->toDateString(),
+            ]),
+            [
             'clock_in' => '08:30',
             'clock_out' => '18:00',
             'reason' => '早く出勤しました',
@@ -189,7 +209,7 @@ class AttendanceDetailUpdateTest extends TestCase
     }
 
     /** @test */
-    //　「承認済み」に管理者が承認した修正申請が全て表示されている
+    //「承認済み」に管理者が承認した修正申請が全て表示されている
     public function test_approved_requests_are_listed_for_user()
     {
         [$user, $attendance1] = $this->createUserWithAttendance(['work_date' => '2025-12-01']);

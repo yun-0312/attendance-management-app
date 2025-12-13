@@ -33,7 +33,7 @@
                 <tr>
                     <td class="request-table_body">承認待ち</td>
                     <td class="request-table_body">{{ $req->user->name }}</td>
-                    <td class="request-table_body">{{ $req->attendance->work_date->format('Y/m/d') }}</td>
+                    <td class="request-table_body">{{ $req->work_date->format('Y/m/d') }}</td>
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
                     <td class="request-table_body">
@@ -69,7 +69,7 @@
                 <tr>
                     <td class="request-table_body">承認済み</td>
                     <td class="request-table_body">{{ $req->user->name }}</td>
-                    <td class="request-table_body">{{ $req->attendance->work_date->format('Y/m/d') }}</td>
+                    <td class="request-table_body">{{ $req->work_date->format('Y/m/d') }}</td>
                     <td class="request-table_body">{{ Str::limit($req->reason, 20) }}</td>
                     <td class="request-table_body">{{ $req->created_at->format('Y/m/d H:i') }}</td>
                     <td class="request-table_body"><a href="{{ route('attendance_request.detail', $req->id) }}" class="request-table__link">詳細</a></td>

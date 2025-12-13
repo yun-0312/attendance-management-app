@@ -69,13 +69,13 @@ Route::prefix('attendance')->middleware(['auth', 'verified'])->group(function ()
         ->name('attendance.list');
 
     // 勤怠詳細画面（一般ユーザー）
-    Route::get('/detail/{attendance}', [AttendanceController::class, 'detail'])
+    Route::get('/detail/{id}', [AttendanceController::class, 'detail'])
         ->name('attendance.detail')
         ->middleware('auth');
 
     // 勤怠修正（一般ユーザー）
-    Route::post('/detail/{attendance}', [AttendanceController::class, 'update'])
-        ->name('attendance.update')
+    Route::post('/detail', [AttendanceController::class, 'storeRequest'])
+        ->name('attendance.request.store')
         ->middleware('auth');
 });
 

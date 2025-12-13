@@ -168,37 +168,6 @@ class Attendance extends Model
         return false;
     }
 
-    //変更テーブル作成
-    public function createRequestFromUpdate($request)
-    {
-        $date = $this->work_date->toDateString();
-
-        DB::transaction(function () use ($request, $date) {
-
-            $attendanceRequest = AttendanceRequest::create([
-                'attendance_id' => $this->id,
-                'user_id' => auth()->id(),
-                'requested_clock_in' => Carbon::parse("$date {$request->clock_in}"),
-                'requested_clock_out' => Carbon::parse("$date {$request->clock_out}"),
-                'reason' => $request->reason,
-                'status' => 'pending',
-            ]);
-
-            foreach ($request->breaks ?? [] as $break) {
-                if (empty($break['start']) && empty($break['end'])) {
-                    continue;
-                }
-
-                BreakTimeRequest::create([
-                    'attendance_request_id' => $attendanceRequest->id,
-                    'break_time_id' => $break['id'] ?? null,
-                    'requested_break_start' => !empty($break['start']) ? Carbon::parse("$date {$break['start']}") : null,
-                    'requested_break_end'   => !empty($break['end']) ? Carbon::parse("$date {$break['end']}") : null,
-                ]);
-            }
-        });
-    }
-
     //修正申告が未承認の場合、承認待ちの情報取得
     public function latestPendingRequest() {
         return $this->attendanceRequests()

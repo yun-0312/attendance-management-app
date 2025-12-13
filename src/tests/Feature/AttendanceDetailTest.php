@@ -66,8 +66,8 @@ class AttendanceDetailTest extends TestCase
         [$user, $attendance] = $this->createUserAndAttendance();
 
         $this->actingAs($user);
-
-        $response = $this->get("/attendance/detail/{$attendance->id}");
+        $date = Carbon::parse('2025-01-15');
+        $response = $this->get("/attendance/detail/{$attendance->id}?date={$date->toDateString()}");
 
         $response->assertStatus(200);
         $response->assertSee('2025年');

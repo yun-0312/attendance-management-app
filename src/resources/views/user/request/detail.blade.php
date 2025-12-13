@@ -20,8 +20,8 @@
         <tr class="detail-table__column">
             <th class="detail-table__header">日付</th>
             <td class="detail-table__data">
-                <span class="detail-table__data-item">{{ $attendance->work_date->format('Y年') }}</span>
-                <span class="detail-table__data-item">{{ $attendance->work_date->format('n月j日') }}</span>
+                <span class="detail-table__data-item">{{ $attendanceRequest->requested_clock_in->format('Y年') }}</span>
+                <span class="detail-table__data-item">{{ $attendanceRequest->requested_clock_in->format('n月j日') }}</span>
             </td>
         </tr>
         <tr class="detail-table__column">

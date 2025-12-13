@@ -5,7 +5,9 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceRequest;
+use App\Models\BreakTimeRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Http\Requests\UpdateAttendanceRequest;
@@ -86,35 +88,85 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function detail (Attendance $attendance) {
-        if ($attendance->user_id !== auth()->id()) {
-            abort(403);
-        }
-        $pendingRequest = $attendance->latestPendingRequest();
-        if ($pendingRequest) {
+    public function detail (Request $request, $id) {
+        $date = Carbon::parse($request->query('date'))->startOfDay();
+        $userId = auth()->id();
+        $pending = AttendanceRequest::where('user_id', $userId)
+            ->whereDate('work_date', $date)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+        if ($pending) {
             return redirect()->route('attendance_request.detail', [
-                'attendanceRequest' => $pendingRequest->id
-            ]);
+                'attendanceRequest' => $pending->id,
+            ]);;
         }
-        $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('user.attendance.detail', compact('attendance', 'breaks'));
+
+        if ((int)$id === 0) {
+            // 新規日（attendance なし）
+            $attendance = null;
+            $breaks = collect();
+        } else {
+            $attendance = Attendance::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
+            if ($attendance->user_id !== auth()->id()) {
+                abort(403);
+            }
+            $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
+        }
+        return view('user.attendance.detail', compact('attendance', 'breaks','date'));
     }
 
-    public function update(UpdateAttendanceRequest $request, Attendance $attendance)
+    public function storeRequest(UpdateAttendanceRequest $request)
     {
-        if ($attendance->user_id !== auth()->id()) {
-            abort(403);
-        }
-        // 変更がなければリダイレクトだけする
-        if (!$attendance->isChangedFromOriginal($request)) {
+        $user = auth()->user();
+        $date = Carbon::parse($request->query('date'))->startOfDay();
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('work_date', $date)
+            ->first();
+        if ($attendance && !$attendance->isChangedFromOriginal($request)) {
             return redirect()
-                ->route('attendance.detail', $attendance->id)
+                ->route('attendance.detail', [
+                    'id'   => $attendance->id,
+                    'date' => $attendance->work_date->toDateString(),
+                ])
                 ->with('success', '変更がありませんでした');
         }
-        // 変更があるときだけ Request を作る
-        $attendance->createRequestFromUpdate($request);
-        return redirect()
-            ->route('attendance.detail', $attendance->id)
-            ->with('success', '修正申請を送信しました');
+        $exists = AttendanceRequest::where('user_id', $user->id)
+                ->whereDate('work_date', $date)
+                ->where('status', 'pending')
+                ->exists();
+        if ($exists) {
+                abort(409, '既に修正申請があります');
+        }
+        DB::transaction(function () use ($request, $user, $date, $attendance) {
+            // AttendanceRequest 作成
+            $attendanceRequest = AttendanceRequest::create([
+                'attendance_id' => $attendance?->id,
+                'user_id' => $user->id,
+                'work_date' => $date,
+                'requested_clock_in' => Carbon::parse($date->toDateString() . ' ' . $request->clock_in),
+                'requested_clock_out' => Carbon::parse($date->toDateString() . ' ' . $request->clock_out),
+                'reason' => $request->reason,
+                'status' => 'pending',
+            ]);
+
+            // BreakTimeRequest 作成
+            foreach ($request->input('breaks', []) as $break) {
+                if (empty($break['start']) || empty($break['end'])) {
+                    continue;
+                }
+                BreakTimeRequest::create([
+                    'attendance_request_id' => $attendanceRequest->id,
+                    'requested_break_start' => Carbon::parse($date->toDateString() . ' ' . $break['start']),
+                    'requested_break_end'   => Carbon::parse($date->toDateString() . ' ' . $break['end']),
+                ]);
+            }
+        });
+        return redirect()->route('attendance.detail', [
+            'id' => 0,
+            'date' => $date->toDateString(),
+        ])->with('success', '修正申請を送信しました');
     }
 }

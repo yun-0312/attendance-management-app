@@ -10,6 +10,11 @@
     {{ session('success') }}
 </p>
 @endif
+@if (session('error'))
+<p class="error-message">
+    {{ session('error') }}
+</p>
+@endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
     <form class="detail__form" action="{{ route('admin.attendance.update', ['attendance' => $attendance->id]) }}" method="post">

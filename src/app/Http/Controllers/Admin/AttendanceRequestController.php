@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 use App\Models\AttendanceRequest;
 use App\Models\BreakTime;
+use App\Models\BreakTimeRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -30,16 +32,34 @@ class AttendanceRequestController extends Controller
     }
 
     public function approve (AttendanceRequest $attendanceRequest) {
+        if (!auth('admin')->check()) {
+            abort(403);
+        }
+
         DB::transaction(function () use ($attendanceRequest) {
-            $attendance = $attendanceRequest->attendance;
-            $attendanceRequest->update([
-                'status' => 'approved',
-                'approved_by' => Auth::id(),
-            ]);
-            $attendance->update([
-                'clock_in'  => $attendanceRequest->requested_clock_in,
-                'clock_out' => $attendanceRequest->requested_clock_out,
-            ]);
+            if ($attendanceRequest->attendance_id === null) {
+                $attendance = Attendance::create([
+                    'user_id'   => $attendanceRequest->user_id,
+                    'work_date' => $attendanceRequest->work_date,
+                    'clock_in'  => $attendanceRequest->requested_clock_in,
+                    'clock_out' => $attendanceRequest->requested_clock_out,
+                ]);
+
+                // attendance_id を紐付け
+                $attendanceRequest->update([
+                    'attendance_id' => $attendance->id,
+                ]);
+            } else {
+                $attendance = $attendanceRequest->attendance;
+                $attendanceRequest->update([
+                    'status' => 'approved',
+                    'approved_by' => Auth::id(),
+                ]);
+                $attendance->update([
+                    'clock_in'  => $attendanceRequest->requested_clock_in,
+                    'clock_out' => $attendanceRequest->requested_clock_out,
+                ]);
+            }
             foreach ($attendanceRequest->breakTimeRequests as $reqBreak) {
                 if ($reqBreak->break_time_id) {
                     BreakTime::where('id', $reqBreak->break_time_id)
