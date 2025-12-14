@@ -78,7 +78,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $this->actingAs($admin, 'admin');
 
-        $response = $this->patch(
+        $response = $this->post(
             route('admin.attendance.update', $attendance->id),
             [
                 'clock_in' => '19:00',
@@ -105,7 +105,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $this->actingAs($admin, 'admin');
 
-        $response = $this->patch(
+        $response = $this->post(
             route('admin.attendance.update', $attendance->id),
             [
                 'clock_in' => '09:00',
@@ -132,7 +132,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $this->actingAs($admin, 'admin');
 
-        $response = $this->patch(
+        $response = $this->post(
             route('admin.attendance.update', $attendance->id),
             [
                 'clock_in' => '09:00',
@@ -159,7 +159,7 @@ class AdminAttendanceDetailTest extends TestCase
 
         $this->actingAs($admin, 'admin');
 
-        $response = $this->patch(
+        $response = $this->post(
             route('admin.attendance.update', $attendance->id),
             [
                 'clock_in' => '09:00',
