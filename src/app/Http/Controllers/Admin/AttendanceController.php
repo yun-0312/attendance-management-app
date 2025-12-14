@@ -26,40 +26,77 @@ class AttendanceController extends Controller
         return view('admin.attendance.list', compact('attendances', 'date'));
     }
 
-    public function detail (Attendance $attendance) {
+    public function detail (Request $request, $id) {
         if (!auth('admin')->check()) {
             abort(403);
         }
-        $pendingRequest = $attendance->attendanceRequests()
-            ->where('status', 'pending')
-            ->with('breakTimeRequests')
-            ->latest()
-            ->first();
-        $displayAttendance = $pendingRequest ? $attendance : $attendance;
-        $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
-        $breaks = $attendance->breakTimes()->orderBy('break_start')->get();
-        return view('admin.attendance.detail', compact('attendance', 'pendingRequest', 'displayAttendance', 'displayBreaks'));
+        if ((int)$id === 0) {
+            // 新規日（attendance なし）
+            $attendance = null;
+            $userId = $request->query('user_id');
+            $dateParam = $request->query('date');
+            if (!$userId || !$dateParam) {
+                abort(404);
+            }
+            $user = User::findOrFail($userId);
+            $date = Carbon::parse($dateParam)->startOfDay();
+            $pendingRequest = AttendanceRequest::whereNull('attendance_id')
+                ->where('user_id', $request->query('user_id'))
+                ->whereDate('work_date', $date)
+                ->where('status', 'pending')
+                ->with('breakTimeRequests')
+                ->latest()
+                ->first();
+
+            $displayAttendance = null;
+            $displayBreaks = $pendingRequest?->breakTimeRequests ?? collect();
+        } else {
+            $attendance = Attendance::with('user')->findOrFail($id);
+            $user = $attendance->user;
+            $date = $attendance->work_date;
+            $pendingRequest = $attendance->attendanceRequests()
+                ->where('status', 'pending')
+                ->with('breakTimeRequests')
+                ->latest()
+                ->first();
+
+            $displayAttendance = $pendingRequest ? $attendance : $attendance;
+
+            $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
+        }
+            return view('admin.attendance.detail', compact('user', 'attendance', 'pendingRequest', 'displayAttendance', 'displayBreaks', 'date'));
     }
 
-    public function update(UpdateAttendanceRequest $request, Attendance $attendance)
+    public function update(UpdateAttendanceRequest $request, $id)
     {
-        // pending があれば修正不可
-        if ($attendance->attendanceRequests()->where('status', 'pending')->exists()) {
-            return redirect()
-                ->route('admin.attendance.detail', $attendance->id)
-                ->with('error', '承認待ちの修正申請があるため修正できません');
-        }
+        $attendance = null;
+        DB::transaction(function () use ($request, $id, &$attendance) {
+            if ((int)$id === 0) {
+                $date = Carbon::parse($request->query('date'))->startOfDay();
 
-        DB::transaction(function () use ($request, $attendance) {
+                $attendance = Attendance::create([
+                    'user_id'   => $request->input('user_id'),
+                    'work_date' => $date,
+                    'clock_in'  => Carbon::parse($date->toDateString() . ' ' . $request->clock_in),
+                    'clock_out' => Carbon::parse($date->toDateString() . ' ' . $request->clock_out),
+                ]);
+            } else {
+                $attendance = Attendance::findOrFail($id);
+
+                // pending があれば修正不可
+                if ($attendance->attendanceRequests()->where('status', 'pending')->exists()) {
+                    throw new \Exception('承認待ちの修正申請があります');
+                }
+            }
+
             $date = $attendance->work_date->toDateString();
-
-            // ① 勤怠を即時更新
+            // ① 勤怠を更新
             $attendance->update([
                 'clock_in'  => Carbon::parse("$date {$request->clock_in}"),
                 'clock_out' => Carbon::parse("$date {$request->clock_out}"),
             ]);
 
-            // ② 修正申請（履歴）を作成（即承認）
+            // ② 修正申請を作成
             $attendanceRequest = AttendanceRequest::create([
                 'attendance_id'       => $attendance->id,
                 'user_id'             => $attendance->user_id,
@@ -86,7 +123,6 @@ class AttendanceController extends Controller
                         'break_end'   => Carbon::parse("$date {$break['end']}"),
                     ]);
 
-                    // 履歴用
                     BreakTimeRequest::create([
                         'attendance_request_id' => $attendanceRequest->id,
                         'break_time_id'         => $break['id'],
@@ -114,7 +150,11 @@ class AttendanceController extends Controller
         });
 
         return redirect()
-            ->route('admin.attendance.detail', $attendance->id)
+            ->route('admin.attendance.detail', [
+                'id'      => $attendance->id,
+                'date'    => $attendance->work_date->toDateString(),
+                'user_id' => $attendance->user_id,
+            ])
             ->with('success', '勤怠を更新しました');
     }
 

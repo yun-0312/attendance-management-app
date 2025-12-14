@@ -113,12 +113,12 @@ Route::prefix('admin')->middleware(['is_admin'])->group(function () {
             ->name('admin.attendance.list');
 
     // 勤怠詳細画面（管理者）
-    Route::get('/attendance/{attendance}', [AdminAttendanceController::class, 'detail'])
+    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'detail'])
         ->name('admin.attendance.detail')
         ->middleware('auth:admin');
 
     // 勤怠詳細修正処理（管理者）
-    Route::patch('/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
+    Route::post('/attendance/{id}', [AdminAttendanceController::class, 'update'])
         ->name('admin.attendance.update')
         ->middleware('auth:admin');
 

@@ -56,11 +56,14 @@
                 <td class="attendance__table-data">{{ $attendance?->total_break_time ?? '' }}</td>
                 <td class="attendance__table-data">{{ $attendance?->total_work_time ?? '' }}</td>
                 <td class="attendance__table-data">
-                    @if ($attendance)
-                    <a href="{{ route('admin.attendance.detail', $attendance->id) }}" class="attendance__table-link">詳細</a>
-                    @else
-                    <a href="" class="attendance__table-link">詳細</a>
-                    @endif
+                    @php
+                    $attendance = $attendances->firstWhere('work_date', $date);
+                    @endphp
+                    <a href="{{ route('admin.attendance.detail',  [
+                        'id'      => $attendance?->id ?? 0,
+                        'user_id' => $user->id,
+                        'date'    => $date->toDateString(),
+                    ]) }}" class="attendance__table-link">詳細</a>
                 </td>
             </tr>
             @endforeach

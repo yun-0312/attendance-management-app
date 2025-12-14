@@ -17,28 +17,35 @@
 @endif
 <div class="detail-container">
     <h2 class="detail-title">勤怠詳細</h2>
-    <form class="detail__form" action="{{ route('admin.attendance.update', ['attendance' => $attendance->id]) }}" method="post">
+
+    @php
+    $isNew = is_null($attendance);
+    @endphp
+    <form class="detail__form" action="{{ route('admin.attendance.update', [
+        'id'      => $attendance?->id ?? 0,
+        'user_id' => $user->id,
+        'date'    => $date->toDateString(),
+    ]) }}" method="post">
         @csrf
-        @method('PATCH')
         <table class="detail-table">
             <tr class="detail-table__column">
                 <th class="detail-table__header">名前</th>
-                <td class="detail-table__data">{{ $attendance->user->name }}</td>
+                <td class="detail-table__data">{{ $user->name }}</td>
             </tr>
             <tr class="detail-table__column">
                 <th class="detail-table__header">日付</th>
                 <td class="detail-table__data">
-                    <span class="detail-table__data-item">{{ $attendance->work_date->format('Y年') }}</span>
-                    <span class="detail-table__data-item">{{ $attendance->work_date->format('n月j日') }}</span>
+                    <span class="detail-table__data-item">{{ $date->format('Y年') }}</span>
+                    <span class="detail-table__data-item">{{ $date->format('n月j日') }}</span>
                 </td>
             </tr>
             <tr class="detail-table__column">
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
-                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($displayAttendance->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($displayAttendance?->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
-                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $displayAttendance->clock_out ? $displayAttendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $displayAttendance?->clock_out ? $displayAttendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
