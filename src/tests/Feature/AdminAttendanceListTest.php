@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\BreakTime;
 
 class AdminAttendanceListTest extends TestCase
 {
@@ -27,10 +28,20 @@ class AdminAttendanceListTest extends TestCase
     protected function createUserAttendance($user, $date, $clockIn = '09:00', $clockOut = '18:00')
     {
         return Attendance::factory()->create([
-            'user_id'   => $user->id,
+            'user_id' => $user->id,
             'work_date' => $date,
-            'clock_in'  => $date . " $clockIn",
+            'clock_in' => $date . " $clockIn",
             'clock_out' => $date . " $clockOut",
+        ]);
+    }
+
+    protected function createBreak($attendance, $start = '12:00', $end = '13:00')
+    {
+        $date = $attendance->work_date->toDateString();
+        return BreakTime::factory()->create([
+            'attendance_id' => $attendance->id,
+            'break_start' => Carbon::parse("$date $start"),
+            'break_end' => Carbon::parse("$date $end"),
         ]);
     }
 
@@ -45,8 +56,12 @@ class AdminAttendanceListTest extends TestCase
         $user2 = User::factory()->create();
 
         // 今日の勤怠データ（2 名分）
-        $this->createUserAttendance($user1, today()->toDateString(), '09:00', '18:00');
-        $this->createUserAttendance($user2, today()->toDateString(), '10:00', '19:00');
+        $attendance1 = $this->createUserAttendance($user1, today()->toDateString(), '09:00', '18:00');
+        $attendance2 = $this->createUserAttendance($user2, today()->toDateString(), '10:00', '19:00');
+
+        // 休憩データ追加
+        $this->createBreak($attendance1, '12:00', '13:00');
+        $this->createBreak($attendance2, '13:00', '14:00');
 
         $this->actingAs($admin, 'admin');
 
@@ -56,10 +71,14 @@ class AdminAttendanceListTest extends TestCase
         $response->assertSee($user1->name);
         $response->assertSee($user2->name);
 
+        //勤怠が表示されているか
         $response->assertSee('09:00');
         $response->assertSee('18:00');
         $response->assertSee('10:00');
         $response->assertSee('19:00');
+
+        //休憩合計時間が表示されているか
+        $response->assertSee('1:00');
     }
 
     /** @test */

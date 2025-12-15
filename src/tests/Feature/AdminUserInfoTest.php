@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\BreakTime;
 
 class AdminUserInfoTest extends TestCase
 {
@@ -65,17 +66,24 @@ class AdminUserInfoTest extends TestCase
             )
             ->create();
 
+        foreach ($attendances as $attendance) {
+            BreakTime::factory()->create([
+                'attendance_id' => $attendance->id,
+                'break_start'   => $attendance->work_date->toDateString() . ' 12:00',
+                'break_end'     => $attendance->work_date->toDateString() . ' 13:00',
+            ]);
+        }
+
         $this->actingAs($admin, 'admin');
 
         $response = $this->get("/admin/attendance/staff/{$user->id}");
 
         foreach ($attendances as $attendance) {
-            $clockIn  = $attendance->clock_in?->format('H:i');
-            $clockOut = $attendance->clock_out?->format('H:i');
-
-            $response->assertSee($clockIn);
-            $response->assertSee($clockOut);
+            $response->assertSee($attendance->clock_in->format('H:i'));
+            $response->assertSee($attendance->clock_out->format('H:i'));
         }
+
+        $response->assertSee('1:00');
     }
 
     /** @test */

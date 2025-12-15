@@ -6,7 +6,6 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Attendance;
-use Carbon\Carbon;
 
 class AttendanceEndTest extends TestCase
 {
@@ -60,7 +59,7 @@ class AttendanceEndTest extends TestCase
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('work_date', today())
             ->first();
-        
+
         $formatTime = $attendance->clock_out->format('H:i');
 
         $response = $this->get('/attendance/list?year=' . now()->year . '&month=' . now()->month);

@@ -150,23 +150,38 @@ class AttendanceDetailUpdateTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post(
-            route('attendance.request.store', [
+        $this->post(route('attendance.request.store', [
                 'date' => $attendance->work_date->toDateString(),
             ]),
             [
-            'clock_in' => '08:30',
-            'clock_out' => '18:00',
-            'reason' => '早く出勤しました',
-            'breaks' => [
-                ['start' => '12:00', 'end' => '13:00']
+                'clock_in' => '08:30',
+                'clock_out' => '18:00',
+                'reason' => '早く出勤しました',
+                'breaks' => [
+                    ['start' => '12:00', 'end' => '13:00']
+                ],
             ]
-        ]);
+        )->assertStatus(302);
 
         $this->assertDatabaseHas('attendance_requests', [
             'attendance_id' => $attendance->id,
             'user_id' => $user->id,
             'status' => 'pending',
+        ]);
+
+        $attendanceRequest = AttendanceRequest::where([
+            'attendance_id' => $attendance->id,
+            'user_id' => $user->id,
+            'status' => 'pending',
+        ])->first();
+
+        $this->assertNotNull($attendanceRequest);
+
+        $date = $attendance->work_date->toDateString();
+        $this->assertDatabaseHas('break_time_requests', [
+            'attendance_request_id' => $attendanceRequest->id,
+            'requested_break_start' => "{$date} 12:00",
+            'requested_break_end' => "{$date} 13:00",
         ]);
     }
 
@@ -175,8 +190,8 @@ class AttendanceDetailUpdateTest extends TestCase
     public function test_pending_requests_are_listed_for_user()
     {
         [$user, $attendance1] = $this->createUserWithAttendance(['work_date' => '2025-12-01']);
-        [, $attendance2]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-02']);
-        [, $attendance3]      = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-03']);
+        [, $attendance2] = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-02']);
+        [, $attendance3] = $this->createUserWithAttendance(['user_id' => $user->id, 'work_date' => '2025-12-03']);
 
         // 3件の「承認待ち」申請
         $requests = AttendanceRequest::factory()->count(3)->sequence(
@@ -264,5 +279,6 @@ class AttendanceDetailUpdateTest extends TestCase
         $response = $this->get(route('attendance_request.detail', $request->id));
         $response->assertStatus(200);
         $response->assertSee($attendance->work_date->format('Y年'));
+        $response->assertSee($attendance->work_date->format('n月j日'));
     }
 }
