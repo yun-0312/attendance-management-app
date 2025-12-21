@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="approve-container">
-    <h2 class="approve-title">勤怠詳細</h2>
+    <h1 class="approve-title">勤怠詳細</h1>
     <table class="approve-table">
         <tr class="approve-table__column">
             <th class="approve-table__header">名前</th>

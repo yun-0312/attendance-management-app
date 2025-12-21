@@ -11,7 +11,7 @@
 </p>
 @endif
 <div class="detail-container">
-    <h2 class="detail-title">勤怠詳細</h2>
+    <h1 class="detail-title">勤怠詳細</h1>
     <table class="detail-table">
         <tr class="detail-table__column">
             <th class="detail-table__header">名前</th>

@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="content-wrapper">
-    <h2 class="login-form__heading">ログイン</h2>
+    <h1 class="login-form__heading">ログイン</h1>
     <form class="form" action="{{ route('login') }}" method="post">
         @csrf
         <div class="login-form__group">

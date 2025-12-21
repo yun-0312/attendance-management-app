@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="list-container">
-    <h2 class="list-title">{{ $date->format('Y年n月j日') }}の勤怠</h2>
+    <h1 class="list-title">{{ $date->format('Y年n月j日') }}の勤怠</h1>
 
     <div class="date-nav">
         <a href="{{ route('admin.attendance.list', ['date' => $date->copy()->subDay()->format('Y-m-d')]) }}"

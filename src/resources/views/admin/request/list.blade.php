@@ -11,7 +11,7 @@
 </p>
 @endif
 <div class="request-list__container">
-    <h2 class="request-list__title">申請一覧</h2>
+    <h1 class="request-list__title">申請一覧</h1>
 
     @php
     $activeTab = request('tab', 'pending');

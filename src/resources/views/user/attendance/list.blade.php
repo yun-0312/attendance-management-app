@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="attendance-list__container">
-    <h2 class="attendance-list__title">勤怠一覧</h2>
+    <h1 class="attendance-list__title">勤怠一覧</h1>
     <div class="month-nav">
         <a href="{{ route('attendance.list', ['year' => $prevMonth->year, 'month' => $prevMonth->month]) }}"
             class="month-nav__link"><span class="month-nav__link-item">←</span> 前月</a>
