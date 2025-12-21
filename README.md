@@ -11,6 +11,7 @@ Dockerを利用した環境構築が可能で、ユーザー登録、出退勤�
   1. リポジトリをクローン
 ``` bash
 git clone git@github.com:yun-0312/attendance-management-app.git
+cd attendance-management-app
 ```
  2. Dockerコンテナをビルドして起動
 ``` bash
