@@ -17,9 +17,9 @@
 @endif
 <div class="detail-container">
     <h1 class="detail-title">勤怠詳細</h1>
-
     @php
     $isNew = is_null($attendance);
+    dd($pendingRequest);
     @endphp
     <form class="detail__form" action="{{ route('admin.attendance.update', [
         'id'      => $attendance?->id ?? 0,

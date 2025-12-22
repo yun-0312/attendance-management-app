@@ -59,10 +59,16 @@ class AttendanceController extends Controller
                 ->with('breakTimeRequests')
                 ->latest()
                 ->first();
+            if ($pendingRequest) {
+                $displayAttendance = $pendingRequest;
+                $displayBreaks = $pendingRequest->breakTimeRequests;
+            } else {
+                $displayAttendance = $attendance;
+                $displayBreaks = $attendance->breakTimes;
+            }
+            // $displayAttendance = $pendingRequest ? $pendingRequest : $attendance;
 
-            $displayAttendance = $pendingRequest ? $attendance : $attendance;
-
-            $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
+            // $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
         }
             return view('admin.attendance.detail', compact('user', 'attendance', 'pendingRequest', 'displayAttendance', 'displayBreaks', 'date'));
     }

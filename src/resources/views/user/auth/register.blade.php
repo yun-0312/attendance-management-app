@@ -10,7 +10,7 @@
     <form class="form" action="{{ route('register') }}" method="post">
         @csrf
         <div class="register-form__group">
-            <label class="register-form__label" for="name">ユーザー名</label>
+            <label class="register-form__label" for="name">名前</label>
             <input type="text" class="register-form__input" name="name" value="{{ old('name') }}">
             <p class="register-form__error-message">
                 @error('name')
