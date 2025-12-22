@@ -66,9 +66,6 @@ class AttendanceController extends Controller
                 $displayAttendance = $attendance;
                 $displayBreaks = $attendance->breakTimes;
             }
-            // $displayAttendance = $pendingRequest ? $pendingRequest : $attendance;
-
-            // $displayBreaks = $pendingRequest ? $pendingRequest->breakTimeRequests : $attendance->breakTimes;
         }
             return view('admin.attendance.detail', compact('user', 'attendance', 'pendingRequest', 'displayAttendance', 'displayBreaks', 'date'));
     }

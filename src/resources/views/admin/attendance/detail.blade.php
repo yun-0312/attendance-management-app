@@ -43,6 +43,15 @@
                 <th class="detail-table__header">出勤・退勤</th>
                 <td class="detail-table__data">
                     <div class="time-row">
+                    @php
+                    $clockIn = $pendingRequest
+                        ? $displayAttendance->requested_clock_in
+                        : $displayAttendance?->clock_in;
+
+                    $clockOut = $pendingRequest
+                        ? $displayAttendance->requested_clock_out
+                        : $displayAttendance?->clock_out;
+                    @endphp
                         <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($displayAttendance?->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
                         <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $displayAttendance?->clock_out ? $displayAttendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
