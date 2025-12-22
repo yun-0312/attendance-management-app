@@ -84,7 +84,6 @@ class AttendanceRequestsTableSeeder extends Seeder
         foreach ($attendance->breakTimes as $break) {
             BreakTimeRequest::create([
                 'attendance_request_id' => $request->id,
-                'break_time_id' => $break->id,
                 'requested_break_start' => $break->break_start,
                 'requested_break_end' => $break->break_end,
                 'created_at' => now()->subSecond(),

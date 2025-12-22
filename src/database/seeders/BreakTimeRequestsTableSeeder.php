@@ -18,8 +18,9 @@ class BreakTimeRequestsTableSeeder extends Seeder
         foreach ($attendanceRequests as $attendanceRequest) {
 
             $attendance = $attendanceRequest->attendance;
-            $date = Carbon::parse($attendance->work_date);
-
+            if (!$attendance) {
+                continue;
+            }
             $breaks = $attendance->breakTimes;
             // 30% の確率で休憩を修正
             $shouldShift = rand(1, 100) <= 30;
@@ -33,7 +34,6 @@ class BreakTimeRequestsTableSeeder extends Seeder
                 }
                 BreakTimeRequest::create([
                     'attendance_request_id' => $attendanceRequest->id,
-                    'break_time_id'         => $break->id,
                     'requested_break_start' => $newStart,
                     'requested_break_end'   => $newEnd,
                 ]);
@@ -53,7 +53,6 @@ class BreakTimeRequestsTableSeeder extends Seeder
                 if ($addEnd->lt($clockOut)) {
                     BreakTimeRequest::create([
                         'attendance_request_id' => $attendanceRequest->id,
-                        'break_time_id'         => null,
                         'requested_break_start' => $addStart,
                         'requested_break_end'   => $addEnd,
                     ]);

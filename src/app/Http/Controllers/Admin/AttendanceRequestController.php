@@ -47,32 +47,27 @@ class AttendanceRequestController extends Controller
                 // attendance_id を紐付け
                 $attendanceRequest->update([
                     'attendance_id' => $attendance->id,
+                    'status' => 'approved',
+                    'approved_by' => auth('admin')->id(),
                 ]);
             } else {
                 $attendance = $attendanceRequest->attendance;
                 $attendanceRequest->update([
                     'status' => 'approved',
-                    'approved_by' => Auth::id(),
+                    'approved_by' => auth('admin')->id(),
                 ]);
                 $attendance->update([
                     'clock_in'  => $attendanceRequest->requested_clock_in,
                     'clock_out' => $attendanceRequest->requested_clock_out,
                 ]);
             }
+            $attendance->breakTimes()->delete();
             foreach ($attendanceRequest->breakTimeRequests as $reqBreak) {
-                if ($reqBreak->break_time_id) {
-                    BreakTime::where('id', $reqBreak->break_time_id)
-                        ->update([
-                            'break_start' => $reqBreak->requested_break_start,
-                            'break_end'   => $reqBreak->requested_break_end,
-                        ]);
-                } else {
-                    BreakTime::create([
-                        'attendance_id' => $attendance->id,
-                        'break_start'   => $reqBreak->requested_break_start,
-                        'break_end'     => $reqBreak->requested_break_end,
-                    ]);
-                }
+                BreakTime::create([
+                    'attendance_id' => $attendance->id,
+                    'break_start'   => $reqBreak->requested_break_start,
+                    'break_end'     => $reqBreak->requested_break_end,
+                ]);
             }
         });
         return redirect()

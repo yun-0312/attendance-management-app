@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\BreakTime;
 
 class BreakTimeRequest extends Model
 {
@@ -12,7 +11,6 @@ class BreakTimeRequest extends Model
 
     protected $fillable = [
         'attendance_request_id',
-        'break_time_id',
         'requested_break_start',
         'requested_break_end',
     ];
@@ -27,8 +25,4 @@ class BreakTimeRequest extends Model
         return $this->belongsTo(AttendanceRequest::class);
     }
 
-    public function breakTime()
-    {
-        return $this->belongsTo(BreakTime::class);
-    }
 }
