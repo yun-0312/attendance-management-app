@@ -19,7 +19,6 @@
     <h1 class="detail-title">勤怠詳細</h1>
     @php
     $isNew = is_null($attendance);
-    dd($pendingRequest);
     @endphp
     <form class="detail__form" action="{{ route('admin.attendance.update', [
         'id'      => $attendance?->id ?? 0,
@@ -52,9 +51,9 @@
                         ? $displayAttendance->requested_clock_out
                         : $displayAttendance?->clock_out;
                     @endphp
-                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($displayAttendance?->clock_in)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_in" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_in', optional($clockIn)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                         <span class="time-separator">～</span>
-                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', $displayAttendance?->clock_out ? $displayAttendance->clock_out->format('H:i') : '') }}" @if($pendingRequest) disabled @endif>
+                        <input type="text" name="clock_out" class="time__input @if($pendingRequest) readonly-input @endif" value="{{ old('clock_out', optional($clockOut)->format('H:i')) }}" @if($pendingRequest) disabled @endif>
                     </div>
                     @error('clock_in')
                     <p class="detail-form__error-message">
